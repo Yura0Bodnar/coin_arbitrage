@@ -2,13 +2,17 @@ import time
 import hashlib
 import hmac
 import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 symbol = 'BTCUSDT'
 
 
 def get_bybit_fee():
-    api_key = 'kPVI9sz2EUrTtZXkG4'
-    api_secret = 'Yek70DEeGVau33xKQSyrMQpn5mT3RHONTxvK'
+    api_key = os.environ.get('BYBIT_API_KEY')
+    api_secret = os.environ.get('BYBIT_API_SECRET')
     timestamp = str(int(time.time() * 1000))
     recv_window = '5000'
     query_string = f'category=spot&symbol={symbol}'
@@ -25,9 +29,35 @@ def get_bybit_fee():
 
     response = requests.get(f'https://api.bybit.com/v5/account/fee-rate?{query_string}', headers=headers)
     data = response.json()
-    print(response.json())
     taker_fee = float(data['result']['list'][0]['takerFeeRate'])
     maker_fee = float(data['result']['list'][0]['makerFeeRate'])
+
+    return taker_fee, maker_fee
+
+
+def get_binance_fee():
+    api_key = os.environ.get('BINANCE_API_KEY')
+    api_secret = os.environ.get('BINANCE_API_SECRET')
+
+    timestamp = str(int(time.time() * 1000))
+    query_string = f'symbol={symbol}&timestamp={timestamp}'
+
+    # Генерація підпису
+    signature = hmac.new(api_secret.encode('utf-8'), query_string.encode('utf-8'), hashlib.sha256).hexdigest()
+
+    # Заголовки для запиту
+    headers = {
+        'X-MBX-APIKEY': api_key
+    }
+
+    # Повний запит з підписом
+    url = f'https://api.binance.com/api/v3/account/commission?{query_string}&signature={signature}'
+    response = requests.get(url, headers=headers)
+
+    data = response.json()
+
+    taker_fee = float(data['standardCommission']['taker'])
+    maker_fee = float(data['standardCommission']['maker'])
 
     return taker_fee, maker_fee
 
@@ -46,7 +76,7 @@ def get_bybit_data():
 
 
 def get_binance_data(symbol):
-    url = f"https://api.binance.com/api/v3/ticker/bookTicker?symbol={symbol}"
+    url = f"https://api4.binance.com/api/v3/ticker/bookTicker?symbol={symbol}"
     response = requests.get(url)
     data = response.json()
     return {
@@ -57,15 +87,16 @@ def get_binance_data(symbol):
     }
 
 
-def calculate_arbitrage(bybit_data, binance_data, fee_binance=0.1):
+def arbitrage_bybit_to_binance(bybit_data, binance_data):
     bybit_bid = bybit_data['bid_price']
     binance_ask = binance_data['ask_price']
 
     fee_bybit, _ = get_bybit_fee()
+    fee_bin, _ = get_binance_fee()
 
     # Calculate potential profit
     spread = bybit_bid - binance_ask
-    net_profit = spread - (binance_ask * fee_binance / 100) - (bybit_bid * fee_bybit / 100)
+    net_profit = spread - (binance_ask * fee_bin / 100) - (bybit_bid * fee_bybit / 100)
 
     return net_profit
 
@@ -73,7 +104,7 @@ def calculate_arbitrage(bybit_data, binance_data, fee_binance=0.1):
 def main():
     bybit_data = get_bybit_data()
     binance_data = get_binance_data(symbol)
-    net_profit = calculate_arbitrage(bybit_data, binance_data)
+    net_profit = arbitrage_bybit_to_binance(bybit_data, binance_data)
 
     print(f"Net Profit: {net_profit}")
 
