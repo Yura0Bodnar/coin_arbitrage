@@ -75,8 +75,22 @@ def get_bybit_fee(symbol):
     response = requests.get(f'https://api.bybit.com/v5/account/fee-rate?{query_string}', headers=headers)
     data = response.json()
 
-    taker_fee = float(data['result']['list'][0]['takerFeeRate'])
-    maker_fee = float(data['result']['list'][0]['makerFeeRate'])
+    # Перевірка ліміту запитів
+    limit_status = response.headers.get('X-Bapi-Limit-Status')
+    limit_reset_timestamp = response.headers.get('X-Bapi-Limit-Reset-Timestamp')
+    if limit_status is not None and int(limit_status) == 0:
+        reset_time = int(limit_reset_timestamp) / 1000 - time.time()
+        print(f"Rate limit exceeded. Waiting for {reset_time} seconds.")
+        time.sleep(max(reset_time, 0))
+        return get_bybit_fee(symbol)
+
+    if 'result' in data and 'list' in data['result']:
+        taker_fee = float(data['result']['list'][0]['takerFeeRate'])
+        maker_fee = float(data['result']['list'][0]['makerFeeRate'])
+    else:
+        print("Error in response data:", data)
+        taker_fee = 0.0018  # Встановіть за замовчуванням або обробіть помилку
+        maker_fee = 0.001  # Встановіть за замовчуванням або обробіть помилку
 
     return taker_fee, maker_fee
 
@@ -108,4 +122,3 @@ def get_okx_fee(symbol):
     maker_fee = float(data['data'][0]['maker'])
 
     return abs(taker_fee), abs(maker_fee)
-
