@@ -5,6 +5,8 @@ import hmac
 import hashlib
 import requests
 from dotenv import load_dotenv
+import httpx
+import sys
 
 load_dotenv()
 
@@ -15,7 +17,6 @@ def get_server_time_binance():
     url = 'https://api.binance.com/api/v3/time'
     response = requests.get(url)
     return response.json()['serverTime']
-
 
 def get_binance_fee(symbol):
     api_key = os.environ.get('BINANCE_API_KEY')
@@ -50,9 +51,11 @@ def get_bybit_server_time():
     return response.json()['time_now']
 
 
+api_key = os.environ.get('BYBIT_API_KEY')
+api_secret = os.environ.get('BYBIT_API_SECRET')
+
+
 def get_bybit_fee(symbol):
-    api_key = os.environ.get('BYBIT_API_KEY')
-    api_secret = os.environ.get('BYBIT_API_SECRET')
 
     # Отримання часу сервера Bybit
     server_time = str(int(float(get_bybit_server_time()) * 1000))
@@ -122,3 +125,35 @@ def get_okx_fee(symbol):
     maker_fee = float(data['data'][0]['maker'])
 
     return abs(taker_fee), abs(maker_fee)
+
+
+def create_signature(api_secret, params):
+    param_str = ''.join([str(v) for v in params.values()])
+    signature = hmac.new(api_secret.encode('utf-8'), param_str.encode('utf-8'), hashlib.sha256).hexdigest()
+    return signature
+
+
+def fetch_all_pairs():
+    endpoint = '/v5/market/instruments-info?category=spot'
+    server_time = str(int(float(get_bybit_server_time()) * 1000))
+    params = {
+        'api_key': api_key,
+        'timestamp': server_time
+    }
+    params['sign'] = create_signature(api_secret, params)
+
+    headers = {
+        'X-BAPI-API-KEY': api_key,
+        'X-BAPI-SIGN': params['sign'],
+        'X-BAPI-TIMESTAMP': server_time,
+    }
+
+    response = requests.get(f'https://api.bybit.com{endpoint}', headers=headers, params=params)
+    data = response.json()
+
+    if 'result' in data and 'list' in data['result']:
+        usdt_pairs = [item['symbol'] for item in data['result']['list'] if item['symbol'].endswith('USDT')]
+        return usdt_pairs
+    else:
+        print("Error in response data:", data)
+        return []
