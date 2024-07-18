@@ -45,3 +45,13 @@ def fetch_pairs_okx():
     else:
         print(f"Failed to fetch data: {response.status_code} - {response.text}")
         return []
+
+
+def association_pairs():
+    pairs_binance = set(fetch_pairs_binance())
+    pairs_bybit = set(fetch_pairs_bybit())
+    pairs_okx = set(fetch_pairs_okx())
+
+    common_pairs = pairs_binance & pairs_bybit & pairs_okx  # Перетин множин для знаходження спільних елементів
+
+    return list(common_pairs)

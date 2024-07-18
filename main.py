@@ -4,7 +4,7 @@ import hashlib
 from dotenv import load_dotenv
 from get_data import get_bybit_data, get_binance_data, get_okx_data
 from get_fee import get_okx_fee, get_binance_fee, get_bybit_fee
-from fetch_pairs import *
+from fetch_pairs import association_pairs
 import os
 
 load_dotenv()
@@ -40,39 +40,45 @@ def arbitrage(exchange1, exchange2, data1, data2, it):
 
     return profit_percent
 
-def association_pairs():
-    pairs_binance = set(fetch_pairs_binance())
-    pairs_bybit = set(fetch_pairs_bybit())
-    pairs_okx = set(fetch_pairs_okx())
 
-    common_pairs = pairs_binance & pairs_bybit & pairs_okx  # Перетин множин для знаходження спільних елементів
+def add_hyphen_okx(pairs):
+    formatted_pairs = []
+    for pair in pairs:
+        begin = pair[:-4]
+        end = "USDT"
+        formatted_pairs.append(f"{begin}-{end}")
 
-    return list(common_pairs)
+    return formatted_pairs
 
 
 def main():
-    it = 0
-    while True:
-        if it % 120 == 0:
-            pairs = association_pairs()
-        bybit_data = get_bybit_data(symbol)
-        binance_data = get_binance_data(symbol)
-        okx_data = get_okx_data(symbol='BTC-USDT')
-
-        arbitrages = [
-            ('bybit', 'binance', bybit_data, binance_data),
-            ('binance', 'bybit', binance_data, bybit_data),
-            ('okx', 'bybit', okx_data, bybit_data),
-            ('okx', 'binance', okx_data, binance_data),
-            ('bybit', 'okx', bybit_data, okx_data),
-            ('binance', 'okx', binance_data, okx_data)
-        ]
-
-        for exchange1, exchange2, data1, data2 in arbitrages:
-            profit_percent = arbitrage(exchange1, exchange2, data1, data2, it)
-            if profit_percent > 0.5:
-                print(f"### Arbitrage opportunity ### \nSell on {exchange1} \nBuy on {exchange2} \nPotential profit: {profit_percent:.2f}%")
-        it += 1
+    pairs = association_pairs()
+    print(len(pairs))
+    #res = add_hyphen_okx(pairs)
+    #print(res)
+    #print(len(res))
+    #it = 0
+    #while True:
+    #    if it % 120 == 0:
+    #        pairs = association_pairs()
+    #    bybit_data = get_bybit_data(symbol)
+    #    binance_data = get_binance_data(symbol)
+    #    okx_data = get_okx_data(symbol='BTC-USDT')
+#
+    #    arbitrages = [
+    #        ('bybit', 'binance', bybit_data, binance_data),
+    #        ('binance', 'bybit', binance_data, bybit_data),
+    #        ('okx', 'bybit', okx_data, bybit_data),
+    #        ('okx', 'binance', okx_data, binance_data),
+    #        ('bybit', 'okx', bybit_data, okx_data),
+    #        ('binance', 'okx', binance_data, okx_data)
+    #    ]
+#
+    #    for exchange1, exchange2, data1, data2 in arbitrages:
+    #        profit_percent = arbitrage(exchange1, exchange2, data1, data2, it)
+    #        if profit_percent > 0.5:
+    #            print(f"### Arbitrage opportunity ### \nSell on {exchange1} \nBuy on {exchange2} \nPotential profit: {profit_percent:.2f}%")
+    #    it += 1
 
 
 if __name__ == "__main__":
