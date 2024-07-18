@@ -18,6 +18,7 @@ def get_server_time_binance():
     response = requests.get(url)
     return response.json()['serverTime']
 
+
 def get_binance_fee(symbol):
     api_key = os.environ.get('BINANCE_API_KEY')
     api_secret = os.environ.get('BINANCE_API_SECRET')
