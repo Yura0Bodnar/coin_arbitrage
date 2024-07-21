@@ -5,8 +5,6 @@ import hmac
 import hashlib
 import requests
 from dotenv import load_dotenv
-import httpx
-import sys
 
 load_dotenv()
 
@@ -22,6 +20,7 @@ def get_server_time_binance():
 def get_binance_fee(symbol):
     api_key = os.environ.get('BINANCE_API_KEY')
     api_secret = os.environ.get('BINANCE_API_SECRET')
+    fees = {}
 
     server_time = get_server_time_binance()
     timestamp = str(server_time)
@@ -42,9 +41,10 @@ def get_binance_fee(symbol):
     data = response.json()
 
     taker_fee = float(data['standardCommission']['taker'])
-    maker_fee = float(data['standardCommission']['maker'])
 
-    return taker_fee, maker_fee
+    fees[symbol] = taker_fee
+
+    return fees
 
 
 def get_bybit_server_time():
@@ -52,11 +52,10 @@ def get_bybit_server_time():
     return response.json()['time_now']
 
 
-api_key = os.environ.get('BYBIT_API_KEY')
-api_secret = os.environ.get('BYBIT_API_SECRET')
-
-
 def get_bybit_fee(symbol):
+    api_key = os.environ.get('BYBIT_API_KEY')
+    api_secret = os.environ.get('BYBIT_API_SECRET')
+    fees = {}
 
     # Отримання часу сервера Bybit
     server_time = str(int(float(get_bybit_server_time()) * 1000))
@@ -90,19 +89,20 @@ def get_bybit_fee(symbol):
 
     if 'result' in data and 'list' in data['result']:
         taker_fee = float(data['result']['list'][0]['takerFeeRate'])
-        maker_fee = float(data['result']['list'][0]['makerFeeRate'])
     else:
         print("Error in response data:", data)
         taker_fee = 0.0018  # Встановіть за замовчуванням або обробіть помилку
-        maker_fee = 0.001  # Встановіть за замовчуванням або обробіть помилку
 
-    return taker_fee, maker_fee
+    fees[symbol] = taker_fee
+
+    return fees
 
 
 def get_okx_fee(symbol):
     api_key = os.environ.get('OKX_API_KEY')
     api_secret = os.environ.get('OKX_API_SECRET')
     api_passphrase = os.environ.get('OKX_API_PASSPHRASE')
+    fees = {}
 
     timestamp = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime())
     method = 'GET'
@@ -123,6 +123,8 @@ def get_okx_fee(symbol):
     data = response.json()
 
     taker_fee = float(data['data'][0]['taker'])
-    maker_fee = float(data['data'][0]['maker'])
 
-    return abs(taker_fee), abs(maker_fee)
+    fees[symbol] = abs(taker_fee)
+
+    return fees
+
