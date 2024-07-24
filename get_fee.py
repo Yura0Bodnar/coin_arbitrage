@@ -6,7 +6,6 @@ import hashlib
 import requests
 from dotenv import load_dotenv
 import asyncio
-import aiohttp
 
 load_dotenv()
 
@@ -58,7 +57,6 @@ def get_binance_fee(symbol):
 def get_bybit_fee(symbol):
     api_key = os.environ.get('BYBIT_API_KEY')
     api_secret = os.environ.get('BYBIT_API_SECRET')
-    fees = {}
 
     try:
         # Get server time
@@ -98,16 +96,14 @@ def get_bybit_fee(symbol):
         else:
             raise ValueError("Unexpected response format: 'result' or 'list' not found")
 
-        fees[symbol] = taker_fee
-
     except requests.exceptions.RequestException as e:  # Handle HTTP request errors
         print(f"Error fetching Bybit fee for {symbol}: {e}")
-        fees[symbol] = None
+        taker_fee = None
     except (ValueError, KeyError, IndexError) as ve:  # Handle unexpected response format errors
         print(f"Error processing response for Bybit fee for {symbol}: {ve}")
-        fees[symbol] = None
+        taker_fee = None
 
-    return fees
+    return taker_fee
 
 
 def get_okx_fee(symbol):
