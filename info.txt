@@ -81,22 +81,54 @@ makerFeeRate: "0.001" - Комісія мейкера (0.10%).
 
 get_binance_data:
 
-https://api4.binance.com/api/v3/ticker/bookTicker?symbol={symbol}
+"https://api4.binance.com/api/v3/ticker/24hr?symbol={symbol}"
 
 {
   "symbol": "BTCUSDT",
-  "bidPrice": "57272.00000000",
-  "bidQty": "1.75870000",
-  "askPrice": "57272.01000000",
-  "askQty": "4.23446000"
+  "priceChange": "-94.99999800",
+  "priceChangePercent": "-95.960",
+  "weightedAvgPrice": "0.29628482",
+  "prevClosePrice": "0.10002000",
+  "lastPrice": "4.00000200",
+  "lastQty": "200.00000000",
+  "bidPrice": "4.00000000",
+  "bidQty": "100.00000000",
+  "askPrice": "4.00000200",
+  "askQty": "100.00000000",
+  "openPrice": "99.00000000",
+  "highPrice": "100.00000000",
+  "lowPrice": "0.10000000",
+  "volume": "8913.30000000",
+  "quoteVolume": "15.30000000",
+  "openTime": 1499783499040,
+  "closeTime": 1499869899040,
+  "firstId": 28385,   // First tradeId
+  "lastId": 28460,    // Last tradeId
+  "count": 76         // Trade count
 }
 
 Опис полів:
-symbol: "BTCUSDT" - Ідентифікатор торгової пари, в даному випадку Bitcoin проти USDT.
-bidPrice: "57272.00000000" - Найвища ціна купівлі (bid price), за яку покупець готовий купити.
-bidQty: "1.75870000" - Обсяг (кількість) на найвищій ціні купівлі.
-askPrice: "57272.01000000" - Найнижча ціна продажу (ask price), за яку продавець готовий продати.
-askQty: "4.23446000" - Обсяг (кількість) на найнижчій ціні продажу.
+symbol: Торгова пара (BNBBTC - Binance Coin проти Bitcoin).
+priceChange: Зміна ціни з моменту відкриття ринку.
+priceChangePercent: Відсоток зміни ціни.
+weightedAvgPrice: Зважена середня ціна за період.
+prevClosePrice: Ціна закриття попереднього періоду.
+lastPrice: Остання ціна угоди.
+lastQty: Кількість останньої угоди.
+bidPrice: Найвища ціна покупки.
+bidQty: Кількість за найвищою ціною покупки.
+askPrice: Найнижча ціна продажу.
+askQty: Кількість за найнижчою ціною продажу.
+openPrice: Ціна відкриття ринку.
+highPrice: Найвища ціна за період.
+lowPrice: Найнижча ціна за період.
+volume: Загальна кількість торгованих монет за період.
+quoteVolume: Загальна вартість торгованих монет за період.
+openTime: Час відкриття періоду.
+closeTime: Час закриття періоду.
+firstId: ID першої угоди.
+lastId: ID останньої угоди.
+count: Кількість угод за період.
 
 
 get_binance_fee:

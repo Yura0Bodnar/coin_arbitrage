@@ -54,10 +54,16 @@ def fetch_pairs_okx():
 
 
 def association_pairs():
-    pairs_binance = set(fetch_pairs_binance())
     pairs_bybit = set(fetch_pairs_bybit())
+    pairs_binance = set(fetch_pairs_binance())
     pairs_okx = set(fetch_pairs_okx())
 
-    common_pairs = pairs_binance & pairs_bybit & pairs_okx  # Перетин множин для знаходження спільних елементів
+    # Пошук пар, які є на двох біржах
+    common_bybit_binance = pairs_bybit & pairs_binance
+    common_binance_okx = pairs_binance & pairs_okx
+    common_bybit_okx = pairs_bybit & pairs_okx
+
+    # Об'єднання всіх спільних пар в один масив
+    common_pairs = common_bybit_binance | common_binance_okx | common_bybit_okx
 
     return list(common_pairs)
