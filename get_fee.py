@@ -106,44 +106,36 @@ def get_bybit_fee(symbol):
     return taker_fee
 
 
-def get_okx_fee(symbol):
-    api_key = os.environ.get('OKX_API_KEY')
-    api_secret = os.environ.get('OKX_API_SECRET')
-    api_passphrase = os.environ.get('OKX_API_PASSPHRASE')
-
+def get_whitebit_fee(symbol):
     try:
-        timestamp = time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime())
-        method = 'GET'
-        request_path = f'/api/v5/account/trade-fee?instType=SPOT&instId={symbol}'
-
-        prehash = timestamp + method + request_path
-        signature = hmac.new(api_secret.encode('utf-8'), prehash.encode('utf-8'), hashlib.sha256).digest()
-        signature = base64.b64encode(signature).decode()
-
-        headers = {
-            'OK-ACCESS-KEY': api_key,
-            'OK-ACCESS-SIGN': signature,
-            'OK-ACCESS-TIMESTAMP': timestamp,
-            'OK-ACCESS-PASSPHRASE': api_passphrase,
-        }
-
-        response = requests.get(f'https://www.okx.com{request_path}', headers=headers)
+        # URL для отримання інформації про активи
+        url = "https://whitebit.com/api/v4/public/assets"
+        response = requests.get(url)
         response.raise_for_status()
-
         data = response.json()
+        print(data[symbol])
+        # Перевірка наявності символу у даних
+        if symbol in data:
+            asset_info = data[symbol]
+            withdraw_info = asset_info.get('limits', {}).get('withdraw', {}).get(symbol, {})
+            deposit_info = asset_info.get('limits', {}).get('deposit', {}).get(symbol, {})
 
-        if 'data' in data and data['data']:
-            taker_fee = float(data['data'][0]['taker'])
+            return {
+                "taker_fee": float(asset_info.get('taker_fee', 0)),
+                "min_deposit": float(deposit_info.get('min', 0)),
+                "min_withdraw": float(withdraw_info.get('min', 0)),
+                "can_withdraw": asset_info.get('can_withdraw', False),
+                "can_deposit": asset_info.get('can_deposit', False),
+                "max_withdraw": float(asset_info.get('max_withdraw', 0)),
+                "max_deposit": float(asset_info.get('max_deposit', 0))
+            }
         else:
-            raise ValueError("Unexpected response format: 'data' not found or empty")
+            print(f"Symbol {symbol} not found in the asset data.")
+            return None
 
-        return abs(taker_fee)
-
-    except requests.exceptions.RequestException as e:  # Обробка помилок HTTP-запитів
-        print(f"Error fetching OKX fee for {symbol}: {e}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching data: {e}")
         return None
-    except ValueError as ve:  # Обробка помилок у випадку неочікуваного формату відповіді
-        print(f"Error processing response for OKX fee for {symbol}: {ve}")
+    except (KeyError, ValueError) as e:
+        print(f"Error processing data: {e}")
         return None
-
-

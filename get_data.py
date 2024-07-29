@@ -50,26 +50,57 @@ def get_binance_data(symbol):
         return None
 
 
-def get_okx_data(symbol):
-    response = None
+def get_whitebit_data(symbol):
     try:
-        url = f"https://www.okx.com/api/v5/market/ticker?instId={symbol}"
+        url_f = f"https://whitebit.com/api/v4/public/orderbook/{symbol}?limit=1"
+        url_s = f"https://whitebit.com/api/v4/public/ticker"
+        response_f = requests.get(url_f)
+        response_s = requests.get(url_s)
+        data_f = response_f.json()
+        data_s = response_s.json()
+
+        if symbol in data_s:
+            return {
+                "bid_price": float(data_f['bids'][0][0]),
+                "ask_price": float(data_f['asks'][0][0]),
+                "bid_size": float(data_f['bids'][0][1]),
+                "ask_size": float(data_f['asks'][0][1]),
+                "volume_24h": float(data_s[symbol]['quote_volume'])
+            }
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching whitebit data for {symbol}: {e}")
+        return None
+    except (KeyError, ValueError) as e:
+        print(f"Error processing whitebit data for {symbol}: {e}")
+        return None
+    except IndexError:
+        return None
+
+
+def get_deepcoin_data(symbol):
+    try:
+        url = "https://api.deepcoin.com/deepcoin/market/tickers?instType=SPOT"
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
-        ticker = data['data'][0]
-        return {
-            "bid_price": float(ticker['bidPx']),
-            "ask_price": float(ticker['askPx']),
-            "bid_size": float(ticker['bidSz']),
-            "ask_size": float(ticker['askSz']),
-            "volume_24h": float(ticker['vol24h']),
-        }
+
+        # Find the specific symbol in the data
+        for ticker in data['data']:
+            if ticker['instId'] == symbol:
+                return {
+                    "ask_price": float(ticker['askPx']),
+                    "ask_size": float(ticker['askSz']),
+                    "bid_price": float(ticker['bidPx']),
+                    "bid_size": float(ticker['bidSz']),
+                    "volume_24h": float(ticker['vol24h']),
+                }
+
+        print(f"Symbol {symbol} not found in the response data.")
+        return None
+
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching OKX data for {symbol}: {e}")
+        print(f"Error fetching Deepcoin data: {e}")
         return None
     except (KeyError, ValueError) as e:
-        print(f"Error processing OKX data for {symbol}: {e}")
-        return None
-    except IndexError:
+        print(f"Error processing Deepcoin data: {e}")
         return None
