@@ -1,6 +1,7 @@
 from get_fee import *
 from fetch_pairs import *
 from get_data import *
+from auxiliary_functions import *
 import time
 
 investment = 500
@@ -40,7 +41,7 @@ def arbitrage(exchange1, exchange2, data1, data2, symbol, whitebit_symbol_fee):
 
     profit_percent = (potential_profit / buy_cost) * 100  # Відсоток прибутку
 
-    return net_profit, profit_percent, trade_volume, trade_volume_usdt
+    return net_profit, profit_percent, trade_volume, trade_volume_usdt, bid_price, ask_price
 
 
 def arbitrage_check(data1, data2):
@@ -58,103 +59,67 @@ def arbitrage_check(data1, data2):
     return potential_profit
 
 
-def add_hyphen(symbol):
-    return f"{symbol[:-4]}-{symbol[-4:]}"
-
-
-def add_underline(symbol):
-    return f"{symbol[:-4]}-{symbol[-4:]}"
-
-
-def pair_to_symbol(symbol):
-    return f"{symbol[:-5]}"
-
-
-def test_api_speed(url, num_requests=100):
-    times = []
-    for _ in range(num_requests):
-        start_time = time.time()
-        response = requests.get(url)
-        elapsed_time = time.time() - start_time
-        if response.status_code == 200:
-            times.append(elapsed_time)
-        else:
-            print(f"Request failed with status code {response.status_code}")
-
-    if times:
-        avg_time = sum(times) / len(times)
-        print(f"Average response time over {num_requests} requests: {avg_time:.4f} seconds")
-    else:
-        print("No successful requests to calculate speed.")
-
-
 def main():
     it = 0
-    pairs_okx, pairs = None, None
+    pairs = None
     while True:
-        try:
-            start_time = time.time()
-            if it % 120 == 0:
-                pairs = association_pairs()
+        start_time = time.time()
+        if it % 120 == 0:
+            pairs = association_pairs()
+            print("Fetched all USDT pairs")
+        for pair in pairs:
+            whitebit_pair = add_underline(pair)
+            deepcoin_pair = add_hyphen(pair)
+            whitebit_symbol_fee = pair_to_symbol(pair)
 
-            for pair in pairs:
-                try:
-                    whitebit_pair = add_underline(pair)
-                    deepcoin_pair = add_hyphen(pair)
-                    whitebit_symbol_fee = pair_to_symbol(symbol)
+            bybit_data = get_bybit_data(pair)
+            binance_data = get_binance_data(pair)
+            whitebit_data = get_whitebit_data(whitebit_pair)
+            deepcoin_data = get_deepcoin_data(deepcoin_pair)
 
-                    bybit_data = get_bybit_data(pair)
-                    binance_data = get_binance_data(pair)
-                    whitebit_data = get_whitebit_data(whitebit_pair)
-                    deepcoin_data = get_deepcoin_data(deepcoin_pair)
+            arbitrages = [
+                ('bybit', 'binance', bybit_data, binance_data),
+                ('binance', 'bybit', binance_data, bybit_data),
+                ('whitebit', 'bybit', whitebit_data, bybit_data),
+                ('whitebit', 'binance', whitebit_data, binance_data),
+                ('bybit', 'whitebit', bybit_data, whitebit_data),
+                ('binance', 'whitebit', binance_data, whitebit_data),
+                ('bybit', 'deepcoin', bybit_data, deepcoin_data),
+                ('binance', 'deepcoin', binance_data, deepcoin_data),
+                ('whitebit', 'deepcoin', whitebit_data, deepcoin_data),
+                ('deepcoin', 'bybit', deepcoin_data, bybit_data),
+                ('deepcoin', 'binance', deepcoin_data, binance_data),
+                ('deepcoin', 'whitebit', deepcoin_data, whitebit_data)
+            ]
 
-                    arbitrages = [
-                        ('bybit', 'binance', bybit_data, binance_data),
-                        ('binance', 'bybit', binance_data, bybit_data),
-                        ('whitebit', 'bybit', whitebit_data, bybit_data),
-                        ('whitebit', 'binance', whitebit_data, binance_data),
-                        ('bybit', 'whitebit', bybit_data, whitebit_data),
-                        ('binance', 'whitebit', binance_data, whitebit_data),
-                        ('bybit', 'deepcoin', bybit_data, deepcoin_data),
-                        ('binance', 'deepcoin', binance_data, deepcoin_data),
-                        ('whitebit', 'deepcoin', whitebit_data, deepcoin_data),
-                        ('deepcoin', 'bybit', deepcoin_data, bybit_data),
-                        ('deepcoin', 'binance', deepcoin_data, binance_data),
-                        ('deepcoin', 'whitebit', deepcoin_data, whitebit_data)
-                    ]
-
-                    for exchange1, exchange2, data1, data2 in arbitrages:
-                        sell_cost = data1['bid_size'] * data1['bid_price']
-                        buy_cost = data2['ask_size'] * data2['ask_price']
-                        if data1 is None or data2 is None:
-                            continue
-                        else:
-                            if (data1['volume_24h'] > 5000000 and data2['volume_24h'] > 5000000
-                                    and buy_cost >= investment and sell_cost >= investment):
-                                potential_profit = arbitrage_check(data1, data2)
-                                if potential_profit > 5:
-                                    profit, profit_percent, trade_volume, trade_volume_usdt = arbitrage(exchange1, exchange2, data1, data2, pair, whitebit_symbol_fee)
-                                    print(f"### Arbitrage opportunity {pair} ### \n"
-                                          f"Number of coins: {trade_volume}\n"
-                                          f"Cost USDT: {trade_volume_usdt}\n"
-                                          f"Sell on {exchange1} \n"
-                                          f"Buy on {exchange2} \n"
-                                          f"Profit: {profit}\n"
-                                          f"Percent profit: {profit_percent:.2f}%\n\n")
-
-                except Exception as e:
-                    print(f"Error processing pair {pair}: {str(e)}")
+            for exchange1, exchange2, data1, data2 in arbitrages:
+                if data1 is None or data2 is None:
                     continue
 
-            it += 1
-            end_time = time.time()
-            execution_time = end_time - start_time
-            print(f"Execution time: {execution_time:.2f} seconds")
-            time.sleep(1)  # Затримка для зменшення навантаження на API
+                sell_cost = data1['bid_size'] * data1['bid_price']
+                buy_cost = data2['ask_size'] * data2['ask_price']
+                if (data1['volume_24h'] > 50000 and data2['volume_24h'] > 50000
+                        and buy_cost >= investment and sell_cost >= investment):
+                    potential_profit = arbitrage_check(data1, data2)
+                    time.sleep(3)
+                    if potential_profit > 0.0000000001:
+                        profit, profit_percent, trade_volume, trade_volume_usdt, bid_price, ask_price = arbitrage(
+                            exchange1, exchange2, data1, data2, pair, whitebit_symbol_fee)
+                        print(f"### Arbitrage opportunity {pair} ### \n"
+                              f"Number of coins: {trade_volume}\n"
+                              f"Cost USDT: {trade_volume_usdt}\n"
+                              f"Sell on {exchange1} \n"
+                              f"Buy on {exchange2} \n"
+                              f"Profit: {profit}\n"
+                              f"Profit percent: {profit_percent:.2f}%\n"
+                              f"Bid price: {bid_price}\n"
+                              f"Ask price: {ask_price}\n\n")
 
-        except Exception as e:
-            print(f"Error in main loop: {str(e)}")
-            time.sleep(60)  # Затримка перед повторною спробою в разі глобальної помилки
+        it += 1
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(f"Execution time: {execution_time:.2f} seconds")
+        time.sleep(1)  # Delay to reduce API load
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 import requests
+from auxiliary_functions import *
 
 
 def fetch_pairs_bybit():
@@ -83,6 +84,10 @@ def association_pairs():
     pairs_binance = set(fetch_pairs_binance())
     pairs_whitebit = set(fetch_pairs_whitebit())
     pairs_deepcoin = set(fetch_pairs_deepcoin())
+
+    # Видаляються лишня символи щоб порівняти пари на різнипх біржах
+    pairs_whitebit = remove_symbol(pairs_whitebit)
+    pairs_deepcoin = remove_symbol(pairs_deepcoin)
 
     # Пошук пар, які є на двох біржах
     common_bybit_binance = pairs_bybit & pairs_binance

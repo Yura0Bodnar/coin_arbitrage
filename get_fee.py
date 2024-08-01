@@ -38,7 +38,6 @@ def get_binance_fee(symbol):
         response.raise_for_status()
 
         data = response.json()
-
         if 'standardCommission' in data and 'taker' in data['standardCommission']:
             taker_fee = float(data['standardCommission']['taker'])
         else:
@@ -117,18 +116,8 @@ def get_whitebit_fee(symbol):
         # Перевірка наявності символу у даних
         if symbol in data:
             asset_info = data[symbol]
-            withdraw_info = asset_info.get('limits', {}).get('withdraw', {}).get(symbol, {})
-            deposit_info = asset_info.get('limits', {}).get('deposit', {}).get(symbol, {})
-
-            return {
-                "taker_fee": float(asset_info.get('taker_fee', 0)),
-                "min_deposit": float(deposit_info.get('min', 0)),
-                "min_withdraw": float(withdraw_info.get('min', 0)),
-                "can_withdraw": asset_info.get('can_withdraw', False),
-                "can_deposit": asset_info.get('can_deposit', False),
-                "max_withdraw": float(asset_info.get('max_withdraw', 0)),
-                "max_deposit": float(asset_info.get('max_deposit', 0))
-            }
+            taker_fee = float(asset_info.get('taker_fee', 0))
+            return taker_fee
         else:
             print(f"Symbol {symbol} not found in the asset data.")
             return None
@@ -136,6 +125,8 @@ def get_whitebit_fee(symbol):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching data: {e}")
         return None
-    except (KeyError, ValueError) as e:
-        print(f"Error processing data: {e}")
+    except (ValueError, IndexError) as e:
+        print(f"Error processing fee data from Whitebit: {e}")
+        return None
+    except KeyError:
         return None

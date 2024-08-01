@@ -2,13 +2,18 @@ import requests
 
 
 def get_bybit_data(symbol):
-    response, data = None, None
     try:
         url = f"https://api.bybit.com/v5/market/tickers?category=spot&symbol={symbol}"
         response = requests.get(url)
         response.raise_for_status()
         data = response.json()
         ticker = data['result']['list'][0]
+
+        # Ensure all required keys are present in the response
+        required_keys = ['bid1Price', 'ask1Price', 'bid1Size', 'ask1Size', 'volume24h']
+        if not all(key in ticker for key in required_keys):
+            raise KeyError(f"Missing one or more required keys in the response for {symbol}")
+
         return {
             "bid_price": float(ticker['bid1Price']),
             "ask_price": float(ticker['ask1Price']),
@@ -17,10 +22,11 @@ def get_bybit_data(symbol):
             "volume_24h": float(ticker['volume24h']),
         }
     except requests.exceptions.RequestException as e:
-        print(f"Error fetching Bybit data for {symbol}: {e}. Status code: {response.status_code}")
+        print(
+            f"Error fetching Bybit data for {symbol}: {e}. Status code: {response.status_code if response else 'N/A'}")
         return None
     except (ValueError, IndexError) as e:
-        print(f"Error processing Bybit data for {symbol}: {e}. Status code: {response.status_code}")
+        print(f"Error processing Bybit data for {symbol}: {e}. Response data: {data if data else 'N/A'}")
         return None
     except KeyError:
         return None
@@ -70,10 +76,8 @@ def get_whitebit_data(symbol):
     except requests.exceptions.RequestException as e:
         print(f"Error fetching whitebit data for {symbol}: {e}")
         return None
-    except (KeyError, ValueError) as e:
+    except (KeyError, ValueError, IndexError) as e:
         print(f"Error processing whitebit data for {symbol}: {e}")
-        return None
-    except IndexError:
         return None
 
 
@@ -95,12 +99,12 @@ def get_deepcoin_data(symbol):
                     "volume_24h": float(ticker['vol24h']),
                 }
 
-        print(f"Symbol {symbol} not found in the response data.")
+        # If the symbol is not found, return None without any message
         return None
 
     except requests.exceptions.RequestException as e:
         print(f"Error fetching Deepcoin data: {e}")
         return None
-    except (KeyError, ValueError) as e:
+    except (KeyError, ValueError, IndexError) as e:
         print(f"Error processing Deepcoin data: {e}")
         return None
