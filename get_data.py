@@ -51,7 +51,6 @@ def get_binance_data(symbol):
 
 
 def get_okx_data(symbol):
-    response = None
     try:
         url = f"https://www.okx.com/api/v5/market/ticker?instId={symbol}"
         response = requests.get(url)
