@@ -33,13 +33,13 @@ def arbitrage(exchange1, exchange2, data1, data2, symbol, whitebit_symbol_fee):
     trade_volume = min(investment / ask_price, bid_size, ask_size)
     trade_volume_usdt = trade_volume * bid_price
 
-    sell_revenue = trade_volume * bid_price  # Прибуток від продажу
-    buy_cost = trade_volume * ask_price  # Прибуток від купівлі
+    sell_revenue = trade_volume * bid_price  # Profit from sales
+    buy_cost = trade_volume * ask_price  # Profit from the purchase
 
-    potential_profit = sell_revenue - buy_cost  # Прибуток від арбітражу
+    potential_profit = sell_revenue - buy_cost  # Profit from arbitration
     net_profit = potential_profit - (buy_cost * fee2 / 100) - (sell_revenue * fee1 / 100)
 
-    profit_percent = (potential_profit / buy_cost) * 100  # Відсоток прибутку
+    profit_percent = (potential_profit / buy_cost) * 100  # Percentage of profit
 
     return net_profit, profit_percent, trade_volume, trade_volume_usdt, bid_price, ask_price
 
@@ -51,10 +51,10 @@ def arbitrage_check(data1, data2):
     ask_size = data2['ask_size']
 
     trade_volume = min(investment / ask_price, bid_size, ask_size)
-    buy_cost = trade_volume * ask_price  # скільки ти зможеш купити монет
-    sell_revenue = trade_volume * bid_price  # Прибуток від продажу
+    buy_cost = trade_volume * ask_price  # How many coins you can buy
+    sell_revenue = trade_volume * bid_price  # Gain on sale
 
-    potential_profit = sell_revenue - buy_cost  # Прибуток від арбітражу
+    potential_profit = sell_revenue - buy_cost  # Profit from arbitration
 
     return potential_profit
 

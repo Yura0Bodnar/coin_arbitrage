@@ -25,28 +25,27 @@ get_bybit_data:
   "time": 1720767789917
 }
 
-Опис полів:
-retCode: "0" - Код відповіді, який означає успіх.
-retMsg: "OK" - Повідомлення, що запит був успішним.
-result: Основний об'єкт, що містить інформацію про ринкові дані.
-category: "spot" - Тип інструменту, в даному випадку спотова торгівля.
-list: Список ринкових даних для заданого інструменту (тут лише один елемент).
-symbol: "BTCUSDT" - Ідентифікатор торгової пари, в даному випадку Bitcoin проти USDT.
-bid1Price: "57211.98" - Найвища ціна купівлі (bid price).
-bid1Size: "0.027433" - Обсяг на найвищій ціні купівлі.
-ask1Price: "57211.99" - Найнижча ціна продажу (ask price).
-ask1Size: "0.384341" - Обсяг на найнижчій ціні продажу.
-lastPrice: "57211.99" - Остання ціна торгівлі.
-prevPrice24h: "57960.9" - Ціна 24 години тому.
-price24hPcnt: "-0.0129" - Відсоткова зміна ціни за останні 24 години.
-highPrice24h: "59559.73" - Максимальна ціна за останні 24 години.
-lowPrice24h: "56538.8" - Мінімальна ціна за останні 24 години.
-turnover24h: "899967257.04802923" - Обіг за останні 24 години в доларах США.
-volume24h: "15536.332399" - Обсяг торгів за останні 24 години.
-usdIndexPrice: "57222.233814" - Індексна ціна в доларах США.
-Додаткові поля:
-retExtInfo: Порожній об'єкт, може містити додаткову інформацію (відсутній у даному випадку).
-time: "1720767789917" - Час відповіді у мілісекундах з Unix Epoch.
+Description of the fields:
+retCode: "0" - Response code indicating success.
+retMsg: "OK" - Message indicating the request was successful.
+result: Main object containing market data information.
+category: "spot" - Type of instrument, in this case, spot trading.
+list: List of market data for the specified instrument (only one item here).
+symbol: "BTCUSDT" - Trading pair identifier, in this case, Bitcoin against USDT.
+bid1Price: "57211.98" - Highest bid price.
+bid1Size: "0.027433" - Volume at the highest bid price.
+ask1Price: "57211.99" - Lowest ask price.
+ask1Size: "0.384341" - Volume at the lowest ask price.
+lastPrice: "57211.99" - Last trade price.
+prevPrice24h: "57960.9" - Price 24 hours ago.
+price24hPcnt: "-0.0129" - Percentage change in price over the last 24 hours.
+highPrice24h: "59559.73" - Highest price in the last 24 hours.
+lowPrice24h: "56538.8" - Lowest price in the last 24 hours.
+turnover24h: "899967257.04802923" - 24-hour turnover in USD.
+volume24h: "15536.332399" - 24-hour trading volume.
+usdIndexPrice: "57222.233814" - Index price in USD.
+retExtInfo: Empty object, may contain additional information (not present in this case).
+time: "1720767789917" - Response time in milliseconds since Unix Epoch.
 
 
 gey_bybit_fee:
@@ -67,16 +66,18 @@ gey_bybit_fee:
   "time": 1721043312608
 }
 
-Опис полів:
-retCode: "0" - Код відповіді, який означає успіх.
-retMsg: "OK" - Повідомлення, що запит був успішним.
-result: Основний об'єкт, що містить інформацію про комісії.
-category: "spot" - Тип інструменту, в даному випадку спотова торгівля.
-list: Список, що містить дані про комісії для заданого інструменту.
-baseCoin: "" - Базова валюта (відсутня для цього запиту).
-symbol: "BTCUSDT" - Ідентифікатор торгової пари, в даному випадку Bitcoin проти USDT.
-takerFeeRate: "0.0018" - Комісія тейкера (0.18%).
-makerFeeRate: "0.001" - Комісія мейкера (0.10%).
+Description of the fields:
+retCode: "0" - Response code indicating success.
+retMsg: "OK" - Message indicating the request was successful.
+result: Main object containing fee information.
+category: "spot" - Type of instrument, in this case, spot trading.
+list: List containing fee data for the specified instrument.
+baseCoin: "" - Base currency (not applicable in this request).
+symbol: "BTCUSDT" - Trading pair identifier, in this case, Bitcoin against USDT.
+takerFeeRate: "0.0018" - Taker fee rate (0.18%).
+makerFeeRate: "0.001" - Maker fee rate (0.10%).
+retExtInfo: Empty object, may contain additional information (not present in this case).
+time: "1721043312608" - Response time in milliseconds since Unix Epoch.
 
 
 get_binance_data:
@@ -107,28 +108,29 @@ get_binance_data:
   "count": 76         // Trade count
 }
 
-Опис полів:
-symbol: Торгова пара (BNBBTC - Binance Coin проти Bitcoin).
-priceChange: Зміна ціни з моменту відкриття ринку.
-priceChangePercent: Відсоток зміни ціни.
-weightedAvgPrice: Зважена середня ціна за період.
-prevClosePrice: Ціна закриття попереднього періоду.
-lastPrice: Остання ціна угоди.
-lastQty: Кількість останньої угоди.
-bidPrice: Найвища ціна покупки.
-bidQty: Кількість за найвищою ціною покупки.
-askPrice: Найнижча ціна продажу.
-askQty: Кількість за найнижчою ціною продажу.
-openPrice: Ціна відкриття ринку.
-highPrice: Найвища ціна за період.
-lowPrice: Найнижча ціна за період.
-volume: Загальна кількість торгованих монет за період.
-quoteVolume: Загальна вартість торгованих монет за період.
-openTime: Час відкриття періоду.
-closeTime: Час закриття періоду.
-firstId: ID першої угоди.
-lastId: ID останньої угоди.
-count: Кількість угод за період.
+Description of the fields:
+
+symbol: The trading pair identifier (e.g., BNBBTC - Binance Coin against Bitcoin).
+priceChange: The price change since the market opened.
+priceChangePercent: The percentage change in price.
+weightedAvgPrice: The weighted average price over the period.
+prevClosePrice: The closing price of the previous period.
+lastPrice: The last trade price.
+lastQty: The quantity of the last trade.
+bidPrice: The highest bid price.
+bidQty: The quantity at the highest bid price.
+askPrice: The lowest ask price.
+askQty: The quantity at the lowest ask price.
+openPrice: The market opening price.
+highPrice: The highest price during the period.
+lowPrice: The lowest price during the period.
+volume: The total quantity of traded coins during the period.
+quoteVolume: The total value of traded coins during the period.
+openTime: The opening time of the period.
+closeTime: The closing time of the period.
+firstId: The ID of the first trade.
+lastId: The ID of the last trade.
+count: The number of trades during the period.
 
 
 get_binance_fee:
@@ -157,28 +159,26 @@ https://api.binance.com/api/v3/account/commission?{query_string}&signature={sign
   }
 }
 
-Опис полів:
-    Основні поля:
-        symbol: "BTCUSDT" - Ідентифікатор торгової пари, в даному випадку Bitcoin проти USDT.
-    Комісії:
-        standardCommission: Стандартні комісії за торгівлю.
+Description of the fields:
+   standardCommission: Standard trading commissions.
 
-        maker: "0.00100000" - Комісія мейкера (0.1%).
-        taker: "0.00100000" - Комісія тейкера (0.1%).
-        buyer: "0.00000000" - Комісія покупця (0%).
-        seller: "0.00000000" - Комісія продавця (0%).
-        taxCommission: Податкові комісії (усі значення рівні 0, що означає відсутність податкових комісій).
+maker: "0.00100000" - Maker fee (0.1%).
+taker: "0.00100000" - Taker fee (0.1%).
+buyer: "0.00000000" - Buyer fee (0%).
+seller: "0.00000000" - Seller fee (0%).
+taxCommission: Tax commissions (all values are 0, indicating no tax commissions).
 
-        maker: "0.00000000" - Податкова комісія мейкера (0%).
-        taker: "0.00000000" - Податкова комісія тейкера (0%).
-        buyer: "0.00000000" - Податкова комісія покупця (0%).
-        seller: "0.00000000" - Податкова комісія продавця (0%).
-    Знижки:
-        discount: Інформація про знижки на комісії.
-        enabledForAccount: True - Знижка активована для акаунта.
-        enabledForSymbol: True - Знижка активована для даної торгової пари.
-        discountAsset: "BNB" - Знижка надається при оплаті комісій у BNB.
-        discount: "0.75000000" - Розмір знижки (75%).
+maker: "0.00000000" - Maker tax commission (0%).
+taker: "0.00000000" - Taker tax commission (0%).
+buyer: "0.00000000" - Buyer tax commission (0%).
+seller: "0.00000000" - Seller tax commission (0%).
+
+Discounts:
+discount: Information about commission discounts.
+enabledForAccount: True - Discount is enabled for the account.
+enabledForSymbol: True - Discount is enabled for the specified trading pair.
+discountAsset: "BNB" - Discount is applied when paying fees in BNB.
+discount: "0.75000000" - The discount amount (75%).
 
 
 get_whitebit_fee:
@@ -223,32 +223,46 @@ https://whitebit.com/api/v4/public/assets
     "currency_precision": 8,
     "is_memo": false
 
-Опис полів:
+Description of the fields:
 
-name - Назва криптовалюти (наприклад, "Bitcoin").
-unified_cryptoasset_id - Уніфікований ідентифікатор криптоактиву.
-can_withdraw - Чи можливе виведення коштів (true - можливо, false - неможливо).
-can_deposit - Чи можливе введення коштів (true - можливо, false - неможливо).
-min_withdraw - Мінімальна сума для виведення.
-max_withdraw - Максимальна сума для виведення (0 означає, що немає обмеження).
-maker_fee - Комісія для мейкерів (0.1%).
-taker_fee - Комісія для тейкерів (0.1%).
-min_deposit - Мінімальна сума для введення.
-max_deposit - Максимальна сума для введення (0 означає, що немає обмеження).
-networks - Мережі, які підтримують введення та виведення коштів:
-deposits - Список мереж для введення (в цьому випадку, тільки "BTC").
-withdraws - Список мереж для виведення (в цьому випадку, тільки "BTC").
-default - Мережа за замовчуванням (в цьому випадку, "BTC").
-confirmations - Кількість підтверджень, необхідних для мережі "BTC".
+name: The name of the cryptocurrency (e.g., "Bitcoin").
 
-deposit - Обмеження для введення:
-min - Мінімальна сума для введення (0.0005 BTC).
+unified_cryptoasset_id: The unified identifier for the crypto asset.
 
-withdraw - Обмеження для виведення:
-min - Мінімальна сума для виведення (0.001 BTC).
+can_withdraw: Whether withdrawals are possible (true - possible, false - not possible).
 
-currency_precision - Точність відображення суми (кількість знаків після коми).
-is_memo - Поле для позначки (його значення не вказано у прикладі).
+can_deposit: Whether deposits are possible (true - possible, false - not possible).
+
+min_withdraw: The minimum amount that can be withdrawn.
+
+max_withdraw: The maximum amount that can be withdrawn (0 indicates no limit).
+
+maker_fee: The fee for makers (0.1%).
+
+taker_fee: The fee for takers (0.1%).
+
+min_deposit: The minimum amount that can be deposited.
+
+max_deposit: The maximum amount that can be deposited (0 indicates no limit).
+
+networks: The networks that support deposits and withdrawals:
+
+deposits: List of networks for deposits (in this case, only "BTC").
+withdraws: List of networks for withdrawals (in this case, only "BTC").
+default: The default network (in this case, "BTC").
+confirmations: The number of confirmations required for the "BTC" network.
+
+limits: Limits for deposits and withdrawals:
+
+deposit:
+BTC:
+min: The minimum amount for deposits (0.0005 BTC).
+withdraw:
+BTC:
+min: The minimum amount for withdrawals (0.001 BTC).
+currency_precision: The precision for displaying the amount (number of decimal places).
+
+is_memo: A field for notes or memo (its value is not provided in the example).
 
 
 get_deepcoin_data:
@@ -274,21 +288,21 @@ https://api.deepcoin.com/deepcoin/market/tickers?instType=SPOT
   'ts': '1722196832000'
 }
 
-Опис полів:
+Description of the fields:
 
-instType: Тип інструмента. В даному випадку це 'SPOT', що означає спотову торгівлю.
-instId: Ідентифікатор інструмента, який вказує на торгову пару. В даному випадку це 'AAVE-USDT', що означає торгівлю між криптовалютами AAVE і USDT.
-last: Остання ціна, за якою був здійснений трейд. В даному випадку це '99.1'.
-lastSz: Розмір останньої угоди. В даному випадку поле порожнє.
-askPx: Ціна найкращої пропозиції (Ask Price), за якою можна купити інструмент. В даному випадку це '99.2'.
-askSz: Розмір найкращої пропозиції (Ask Size), яка доступна за ціною askPx. В даному випадку це '51.98384788'.
-bidPx: Ціна найкращого запиту (Bid Price), за якою можна продати інструмент. В даному випадку це '99'.
-bidSz: Розмір найкращого запиту (Bid Size), який доступний за ціною bidPx. В даному випадку це '52.76186684'.
-open24h: Ціна відкриття за останні 24 години. В даному випадку це '99.7'.
-high24h: Найвища ціна за останні 24 години. В даному випадку це '100.3'.
-low24h: Найнижча ціна за останні 24 години. В даному випадку це '98.6'.
-volCcy24h: Обсяг торгівлі у валюті котирування за останні 24 години. В даному випадку це '24649.9194' USDT.
-vol24h: Обсяг торгівлі за останні 24 години. В даному випадку це '494.96' AAVE.
-sodUtc0: Ціна початку дня за UTC+0. В даному випадку поле порожнє.
-sodUtc8: Ціна початку дня за UTC+8. В даному випадку поле порожнє.
-ts: Мітка часу (timestamp) в мілісекундах з початку епохи Unix (1970-01-01). В даному випадку це '1722196832000', що відповідає конкретному часу та даті.
+instType: The type of instrument. In this case, it is 'SPOT', meaning spot trading.
+instId: The instrument identifier, indicating the trading pair. In this case, it is 'AAVE-USDT', meaning the trade between AAVE and USDT.
+last: The last price at which a trade was executed. In this case, it is '99.1'.
+lastSz: The size of the last trade. In this case, the field is empty.
+askPx: The best ask price, at which the instrument can be bought. In this case, it is '99.2'.
+askSz: The size of the best ask order available at the price askPx. In this case, it is '51.98384788'.
+bidPx: The best bid price, at which the instrument can be sold. In this case, it is '99'.
+bidSz: The size of the best bid order available at the price bidPx. In this case, it is '52.76186684'.
+open24h: The opening price over the last 24 hours. In this case, it is '99.7'.
+high24h: The highest price over the last 24 hours. In this case, it is '100.3'.
+low24h: The lowest price over the last 24 hours. In this case, it is '98.6'.
+volCcy24h: The trading volume in the quote currency over the last 24 hours. In this case, it is '24649.9194' USDT.
+vol24h: The trading volume over the last 24 hours. In this case, it is '494.96' AAVE.
+sodUtc0: The start-of-day price at UTC+0. In this case, the field is empty.
+sodUtc8: The start-of-day price at UTC+8. In this case, the field is empty.
+ts: The timestamp in milliseconds since Unix Epoch (1970-01-01). In this case, it is '1722196832000', corresponding to a specific date and time.
