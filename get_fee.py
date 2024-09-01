@@ -113,7 +113,7 @@ def get_whitebit_fee(symbol):
         response.raise_for_status()
         data = response.json()
         print(data[symbol])
-        # Перевірка наявності символу у даних
+        # Check for a character in the data
         if symbol in data:
             asset_info = data[symbol]
             taker_fee = float(asset_info.get('taker_fee', 0))

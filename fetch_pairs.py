@@ -16,7 +16,7 @@ def fetch_pairs_bybit():
         else:
             print("Error in response data:", data)
             return []
-    except requests.exceptions.RequestException as e:  # Обробка помилок HTTP-запитів
+    except requests.exceptions.RequestException as e:
         print(f"Error fetching Bybit pairs: {e}")
         return []
 
@@ -33,7 +33,7 @@ def fetch_pairs_binance():
         usdt_pairs = [item['symbol'] for item in data['symbols'] if
                       item['symbol'].endswith('USDT') and item['status'] == 'TRADING']
         return usdt_pairs
-    except requests.exceptions.RequestException as e:  # Обробка помилок HTTP-запитів
+    except requests.exceptions.RequestException as e:
         print(f"Error fetching Binance pairs: {e}")
         return []
 
@@ -85,11 +85,11 @@ def association_pairs():
     pairs_whitebit = set(fetch_pairs_whitebit())
     pairs_deepcoin = set(fetch_pairs_deepcoin())
 
-    # Видаляються лишня символи щоб порівняти пари на різнипх біржах
+    # Removes extra characters to compare pairs on different exchanges
     pairs_whitebit = remove_symbol(pairs_whitebit)
     pairs_deepcoin = remove_symbol(pairs_deepcoin)
 
-    # Пошук пар, які є на двох біржах
+    # Search for pairs that are available on two exchanges
     common_bybit_binance = pairs_bybit & pairs_binance
     common_binance_whitebit = pairs_binance & pairs_whitebit
     common_bybit_whitebit = pairs_bybit & pairs_whitebit
@@ -97,7 +97,7 @@ def association_pairs():
     common_binance_deepcoin = pairs_binance & pairs_deepcoin
     common_deepcoin_whitebit = pairs_whitebit & pairs_deepcoin
 
-    # Об'єднання всіх спільних пар в один масив
+    # Combining all common pairs into one array
     common_pairs = common_bybit_binance | common_binance_whitebit | common_bybit_whitebit | common_bybit_deepcoin | common_binance_deepcoin | common_deepcoin_whitebit
 
     return list(common_pairs)
