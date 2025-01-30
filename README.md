@@ -1,6 +1,6 @@
 # Cryptocurrency Arbitrage Trading Bot
 
-This project is a cryptocurrency arbitrage trading bot that monitors and compares prices across multiple exchanges (Bybit, Binance, Whitebit, Deepcoin) to identify arbitrage opportunities. The bot calculates potential profit percentages and logs profitable trades.
+The project is about a cryptocurrency arbitrage trading bot that monitors and compares prices across multiple exchanges (Bybit, Binance, Whitebit) to identify arbitrage opportunities. The bot calculates potential profit percentages and logs profitable trades.
 
 ## Table of Contents
 

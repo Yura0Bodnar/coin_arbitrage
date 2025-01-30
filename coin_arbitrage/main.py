@@ -1,7 +1,10 @@
-from get_fee import *
-from fetch_pairs import *
-from get_data import *
-from auxiliary_functions import *
+from coin_arbitrage.whitebit.get_fee import *
+from coin_arbitrage.bybit.get_fee import *
+from coin_arbitrage.binance.get_fee import *
+from coin_arbitrage.whitebit.get_data import *
+from coin_arbitrage.bybit.get_data import *
+from coin_arbitrage.binance.get_data import *
+from coin_arbitrage.auxiliary_functions import *
 import time
 
 investment = 500
@@ -69,13 +72,11 @@ def main():
             print("Fetched all USDT pairs")
         for pair in pairs:
             whitebit_pair = add_underline(pair)
-            deepcoin_pair = add_hyphen(pair)
             whitebit_symbol_fee = pair_to_symbol(pair)
 
             bybit_data = get_bybit_data(pair)
             binance_data = get_binance_data(pair)
             whitebit_data = get_whitebit_data(whitebit_pair)
-            deepcoin_data = get_deepcoin_data(deepcoin_pair)
 
             arbitrages = [
                 ('bybit', 'binance', bybit_data, binance_data),
@@ -84,12 +85,6 @@ def main():
                 ('whitebit', 'binance', whitebit_data, binance_data),
                 ('bybit', 'whitebit', bybit_data, whitebit_data),
                 ('binance', 'whitebit', binance_data, whitebit_data),
-                ('bybit', 'deepcoin', bybit_data, deepcoin_data),
-                ('binance', 'deepcoin', binance_data, deepcoin_data),
-                ('whitebit', 'deepcoin', whitebit_data, deepcoin_data),
-                ('deepcoin', 'bybit', deepcoin_data, bybit_data),
-                ('deepcoin', 'binance', deepcoin_data, binance_data),
-                ('deepcoin', 'whitebit', deepcoin_data, whitebit_data)
             ]
 
             for exchange1, exchange2, data1, data2 in arbitrages:
