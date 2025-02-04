@@ -5,6 +5,9 @@ __pycache__/
 
 # C extensions
 *.so
+*.xml
+*.iml
+.idea/
 
 # Distribution / packaging
 .Python

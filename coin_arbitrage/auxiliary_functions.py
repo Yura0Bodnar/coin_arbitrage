@@ -1,6 +1,8 @@
 import requests
 import time
-
+from whitebit.fetch_pairs import fetch_pairs_whitebit
+from binance.fetch_pairs import fetch_pairs_binance
+from bybit.fetch_pairs import fetch_pairs_bybit
 
 def add_hyphen(pair):
     return f"{pair[:-4]}-{pair[-4:]}"
@@ -60,3 +62,21 @@ def get_symbols_with_restrictions():
     except (KeyError, ValueError) as e:
         print(f"Error processing data: {e}")
         return None
+    
+def association_pairs():
+    pairs_bybit = set(fetch_pairs_bybit())
+    pairs_binance = set(fetch_pairs_binance())
+    pairs_whitebit = set(fetch_pairs_whitebit())
+
+    # Removes extra characters to compare pairs on different exchanges
+    pairs_whitebit = remove_symbol(pairs_whitebit)
+
+    # Search for pairs that are available on two exchanges
+    common_bybit_binance = pairs_bybit & pairs_binance
+    common_binance_whitebit = pairs_binance & pairs_whitebit
+    common_bybit_whitebit = pairs_bybit & pairs_whitebit
+
+    # Combining all common pairs into one array
+    common_pairs = common_bybit_binance | common_binance_whitebit | common_bybit_whitebit
+
+    return list(common_pairs)
