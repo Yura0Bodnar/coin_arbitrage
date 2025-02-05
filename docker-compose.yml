@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  redis:
+    image: redis:latest
+    container_name: coin_arbitrage-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - coin_arbitrage_network
+
+  bybit:
+    build:
+      context: .
+    container_name: coin_arbitrage-bybit
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=coin_arbitrage-redis
+      - EXCHANGE_ROLE=bybit
+    volumes:
+      - .:/app
+    command: python /app/coin_arbitrage/main.py
+    networks:
+      - coin_arbitrage_network
+
+  whitebit:
+    build:
+      context: .
+    container_name: coin_arbitrage-whitebit
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=coin_arbitrage-redis
+      - EXCHANGE_ROLE=whitebit
+    volumes:
+      - .:/app
+    command: python /app/coin_arbitrage/main.py
+    networks:
+      - coin_arbitrage_network
+
+  main:
+    build:
+      context: .
+    container_name: coin_arbitrage-main
+    depends_on:
+      - redis
+      - bybit
+      - whitebit
+    environment:
+      - REDIS_HOST=coin_arbitrage-redis
+      - EXCHANGE_ROLE=main
+    volumes:
+      - .:/app
+    command: python /app/coin_arbitrage/main.py
+    networks:
+      - coin_arbitrage_network
+
+networks:
+  coin_arbitrage_network:
+    driver: bridge
