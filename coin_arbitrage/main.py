@@ -54,8 +54,7 @@ def process_whitebit():
         time.sleep(10)
 
 
-def process_main():
-    """Логіка для головного контейнера."""
+def main():
     logging.info("Запуск головного процесу")
     it = 0
     pairs = None
@@ -67,42 +66,33 @@ def process_main():
         if it % 120 == 0:
             pairs = association_pairs()
             logging.info("Оновлено список USDT пар")
-
+            print(pairs)
         for pair in pairs:
             logging.info(f"Перевіряємо арбітраж для пари: {pair}")
             underline_pair = add_underline(pair)
 
             signal_bybit = f"bybit:{pair}:ready"
             signal_whitebit = f"whitebit:{underline_pair}:ready"
+            bybit_key = f"bybit:{pair}"
+            whitebit_key = f"whitebit:{pair}"
 
-            # Очікуємо сигналів готовності від контейнерів
-            while not (redis_client.get(signal_bybit) and redis_client.get(signal_whitebit)):
-                logging.info(f"Очікуємо дані для {pair} з Bybit і WhiteBit...")
-                time.sleep(5)
+            if EXCHANGE_ROLE == "bybit":
+                get_bybit_data(pair, bybit_key)
+            elif EXCHANGE_ROLE == "whitebit":
+                get_whitebit_data(underline_pair, whitebit_key)
+            elif EXCHANGE_ROLE == "main":
+                # Очікуємо сигналів готовності від контейнерів
+                while not (redis_client.get(signal_bybit) and redis_client.get(signal_whitebit)):
+                    logging.info(f"Очікуємо дані для {pair} з Bybit і WhiteBit...")
+                    time.sleep(5)
 
-            logging.info(f"✅ Отримано сигнали готовності для {pair}. Продовжуємо...")
-            # Тут додаємо арбітражну логіку
+                logging.info(f"✅ Отримано сигнали готовності для {pair}. Продовжуємо...")
 
-        it += 1
-        end_time = time.time()
-        logging.info(f"Час виконання: {end_time - start_time:.2f} секунд")
-        time.sleep(1)
-
-
-def main():
-    """Основна точка входу."""
-    if EXCHANGE_ROLE == "bybit":
-        logging.info("Контейнер Bybit запущено")
-        process_bybit()
-    elif EXCHANGE_ROLE == "whitebit":
-        logging.info("Контейнер WhiteBit запущено")
-        process_whitebit()
-    elif EXCHANGE_ROLE == "main":
-        logging.info("Контейнер Main запущено")
-        process_main()
-    else:
-        logging.error(f"❌ Невідома роль: {EXCHANGE_ROLE}")
-        sys.exit(1)
+        if EXCHANGE_ROLE == "main":
+            it += 1
+            end_time = time.time()
+            logging.info(f"Час виконання: {end_time - start_time:.2f} секунд")
+            time.sleep(1)
 
 
 if __name__ == "__main__":
