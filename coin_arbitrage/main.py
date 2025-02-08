@@ -93,7 +93,7 @@ def main():
         if EXCHANGE_ROLE == "main":
             it += 1
             end_time = time.time()
-            logging.info(f"Час: {end_time - start_time:.2f} секунд")
+            logging.info(f"Час виконання: {end_time - start_time:.2f} секунд")
             time.sleep(1)
 
 
