@@ -57,33 +57,35 @@ def process_whitebit():
 def main():
     logging.info("Запуск головного процесу")
     it = 0
-    pairs = None
 
     while True:
         start_time = time.time()
+        pairs_key = 'bybit-whitebit:pairs'
 
         # Оновлюємо список пар кожні 120 ітерацій
         if it % 120 == 0:
-            pairs = association_pairs()
+            association_pairs(pairs_key)
             logging.info("Оновлено список USDT пар")
-            print(pairs)
+        pairs = redis_client.smembers(pairs_key)
         for pair in pairs:
             logging.info(f"Перевіряємо арбітраж для пари: {pair}")
             underline_pair = add_underline(pair)
 
             signal_bybit = f"bybit:{pair}:ready"
-            signal_whitebit = f"whitebit:{underline_pair}:ready"
+            signal_whitebit = f"whitebit:{pair}:ready"
             bybit_key = f"bybit:{pair}"
             whitebit_key = f"whitebit:{pair}"
 
             if EXCHANGE_ROLE == "bybit":
                 get_bybit_data(pair, bybit_key)
+                redis_client.set(signal_bybit, "1")
             elif EXCHANGE_ROLE == "whitebit":
                 get_whitebit_data(underline_pair, whitebit_key)
+                redis_client.set(signal_whitebit, "1")
             elif EXCHANGE_ROLE == "main":
                 # Очікуємо сигналів готовності від контейнерів
                 while not (redis_client.get(signal_bybit) and redis_client.get(signal_whitebit)):
-                    logging.info(f"Очікуємо дані для {pair} з Bybit і WhiteBit...")
+                    logging.info(f"Очікуємо дані для {pair} з Bybit і Whitebit...")
                     time.sleep(5)
 
                 logging.info(f"✅ Отримано сигнали готовності для {pair}. Продовжуємо...")

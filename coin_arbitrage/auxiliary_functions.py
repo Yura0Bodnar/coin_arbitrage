@@ -80,7 +80,7 @@ def get_symbols_with_restrictions():
         print(f"Error processing data: {e}")
         return None
 
-def association_pairs():
+def association_pairs(pairs_key):
     """
     Отримує пари USDT з Redis, порівнює між біржами та повертає список спільних пар.
     """
@@ -94,12 +94,18 @@ def association_pairs():
         fetch_pairs_bybit(redis_key_bybit)
         logging.info("Контейнер Bybit оновив свої пари в Redis")
         redis_client.set(signal_bybit, "1")  # Ставимо сигнал готовності для Bybit
+        while not redis_client.scard(pairs_key):
+            logging.info(f"BYBIT: Очікуємо ключ {pairs_key} у Redis...")
+            time.sleep(5)  # Чекаємо 5 секунд перед перевіркою
 
     # Якщо контейнер WhiteBit, записуємо тільки його дані в Redis
     if EXCHANGE_ROLE == "whitebit":
         fetch_pairs_whitebit(redis_key_whitebit)
         logging.info("Контейнер WhiteBit оновив свої пари в Redis")
         redis_client.set(signal_whitebit, "1")  # Ставимо сигнал готовності для WhiteBit
+        while not redis_client.scard(pairs_key):
+            logging.info(f"WHITEBIT: Очікуємо ключ {pairs_key} у Redis...")
+            time.sleep(5)  # Чекаємо 5 секунд перед перевіркою
 
     # Якщо контейнер Main, то чекаємо сигналів від Bybit і WhiteBit
     if EXCHANGE_ROLE == "main":
@@ -120,10 +126,6 @@ def association_pairs():
             logging.warning("Дані WhiteBit відсутні у Redis. Зупинка програми")
             return []
 
-        # Приводимо до множини
-        pairs_bybit = set(pairs_bybit)
-        pairs_whitebit = set(pairs_whitebit)
-
         # Видаляємо зайві символи для уніфікації назв пар на WhiteBit
         pairs_whitebit = remove_symbol(pairs_whitebit)
 
@@ -135,11 +137,12 @@ def association_pairs():
         # Видаляємо дані про пари з Redis після обробки (тільки якщо це головний контейнер)
         redis_client.delete(redis_key_bybit)
         redis_client.delete(redis_key_whitebit)
+
         redis_client.delete(signal_bybit)
         redis_client.delete(signal_whitebit)
+        redis_client.sadd(pairs_key, *common_pairs)
+        time.sleep(5)
         logging.info(f"Видалено ключі: {redis_key_bybit}, {redis_key_whitebit}, {signal_bybit}, {signal_whitebit} з Redis")
-
-        return list(common_pairs)
 
 
 def get_fees(exchange, symbol, whitebit_symbol_fee):
