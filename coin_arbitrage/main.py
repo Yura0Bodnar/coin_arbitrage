@@ -1,120 +1,100 @@
-from coin_arbitrage.whitebit.get_fee import *
-from coin_arbitrage.bybit.get_fee import *
-from coin_arbitrage.binance.get_fee import *
-from coin_arbitrage.whitebit.get_data import *
-from coin_arbitrage.bybit.get_data import *
-from coin_arbitrage.binance.get_data import *
-from coin_arbitrage.auxiliary_functions import *
+from coin_arbitrage.whitebit.get_data import get_whitebit_data
+from coin_arbitrage.bybit.get_data import get_bybit_data
+from coin_arbitrage.auxiliary_functions import association_pairs, add_underline, pair_to_symbol
+import logging
+import redis
+from dotenv import load_dotenv
+import os
 import time
+import sys
 
-investment = 500
+# Завантажуємо змінні оточення
+load_dotenv()
 
+EXCHANGE_ROLE = os.getenv("EXCHANGE_ROLE")
+REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 
-def get_fees(exchange, symbol, whitebit_symbol_fee):
-    if exchange == 'bybit':
-        return get_bybit_fee(symbol)
-    elif exchange == 'binance':
-        return get_binance_fee(symbol)
-    elif exchange == 'whitebit':
-        return get_whitebit_fee(whitebit_symbol_fee)
-    elif exchange == 'deepcoin':
-        return 0.06
-    else:
-        raise ValueError("Unknown exchange")
+# Підключення до Redis
+redis_client = redis.Redis(host=REDIS_HOST, port=6379, db=0, decode_responses=True)
+
+# Налаштування логування
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
-def arbitrage(exchange1, exchange2, data1, data2, symbol, whitebit_symbol_fee):
-    bid_price = data1['bid_price']
-    ask_price = data2['ask_price']
-    bid_size = data1['bid_size']
-    ask_size = data2['ask_size']
+def process_bybit():
+    """Логіка для контейнера Bybit."""
+    while True:
+        pairs = redis_client.smembers("bybit:usdt_pairs")
+        if not pairs:
+            logging.info("Немає пар для обробки Bybit. Очікування...")
+            time.sleep(5)
+            continue
 
-    fee1 = get_fees(exchange1, symbol, whitebit_symbol_fee)
-    fee2 = get_fees(exchange2, symbol, whitebit_symbol_fee)
-
-    # Calculate potential profit
-    trade_volume = min(investment / ask_price, bid_size, ask_size)
-    trade_volume_usdt = trade_volume * bid_price
-
-    sell_revenue = trade_volume * bid_price  # Profit from sales
-    buy_cost = trade_volume * ask_price  # Profit from the purchase
-
-    potential_profit = sell_revenue - buy_cost  # Profit from arbitration
-    net_profit = potential_profit - (buy_cost * fee2 / 100) - (sell_revenue * fee1 / 100)
-
-    profit_percent = (potential_profit / buy_cost) * 100  # Percentage of profit
-
-    return net_profit, profit_percent, trade_volume, trade_volume_usdt, bid_price, ask_price
+        for pair in pairs:
+            redis_key = f"bybit:{pair}"
+            get_bybit_data(pair, redis_key)
+            logging.info(f"✅ Дані для {pair} з Bybit записані в Redis")
+        time.sleep(10)
 
 
-def arbitrage_check(data1, data2):
-    bid_price = data1['bid_price']
-    ask_price = data2['ask_price']
-    bid_size = data1['bid_size']
-    ask_size = data2['ask_size']
+def process_whitebit():
+    """Логіка для контейнера WhiteBit."""
+    while True:
+        pairs = redis_client.smembers("whitebit:usdt_pairs")
+        if not pairs:
+            logging.info("Немає пар для обробки WhiteBit. Очікування...")
+            time.sleep(5)
+            continue
 
-    trade_volume = min(investment / ask_price, bid_size, ask_size)
-    buy_cost = trade_volume * ask_price  # How many coins you can buy
-    sell_revenue = trade_volume * bid_price  # Gain on sale
-
-    potential_profit = sell_revenue - buy_cost  # Profit from arbitration
-
-    return potential_profit
+        for pair in pairs:
+            underline_pair = add_underline(pair)
+            redis_key = f"whitebit:{underline_pair}"
+            get_whitebit_data(underline_pair, redis_key)
+            logging.info(f"✅ Дані для {pair} з WhiteBit записані в Redis")
+        time.sleep(10)
 
 
 def main():
+    logging.info("Запуск головного процесу")
     it = 0
-    pairs = None
+
     while True:
         start_time = time.time()
+        pairs_key = 'bybit-whitebit:pairs'
+
+        # Оновлюємо список пар кожні 120 ітерацій
         if it % 120 == 0:
-            pairs = association_pairs()
-            print("Fetched all USDT pairs")
+            association_pairs(pairs_key)
+            logging.info("Оновлено список USDT пар")
+        pairs = redis_client.smembers(pairs_key)
         for pair in pairs:
-            whitebit_pair = add_underline(pair)
-            whitebit_symbol_fee = pair_to_symbol(pair)
+            logging.info(f"Перевіряємо арбітраж для пари: {pair}")
+            underline_pair = add_underline(pair)
 
-            bybit_data = get_bybit_data(pair)
-            binance_data = get_binance_data(pair)
-            whitebit_data = get_whitebit_data(whitebit_pair)
+            signal_bybit = f"bybit:{pair}:ready"
+            signal_whitebit = f"whitebit:{pair}:ready"
+            bybit_key = f"bybit:{pair}"
+            whitebit_key = f"whitebit:{pair}"
 
-            arbitrages = [
-                ('bybit', 'binance', bybit_data, binance_data),
-                ('binance', 'bybit', binance_data, bybit_data),
-                ('whitebit', 'bybit', whitebit_data, bybit_data),
-                ('whitebit', 'binance', whitebit_data, binance_data),
-                ('bybit', 'whitebit', bybit_data, whitebit_data),
-                ('binance', 'whitebit', binance_data, whitebit_data),
-            ]
+            if EXCHANGE_ROLE == "bybit":
+                get_bybit_data(pair, bybit_key)
+                redis_client.set(signal_bybit, "1")
+            elif EXCHANGE_ROLE == "whitebit":
+                get_whitebit_data(underline_pair, whitebit_key)
+                redis_client.set(signal_whitebit, "1")
+            elif EXCHANGE_ROLE == "main":
+                # Очікуємо сигналів готовності від контейнерів
+                while not (redis_client.get(signal_bybit) and redis_client.get(signal_whitebit)):
+                    logging.info(f"Очікуємо дані для {pair} з Bybit і Whitebit...")
+                    time.sleep(5)
 
-            for exchange1, exchange2, data1, data2 in arbitrages:
-                if data1 is None or data2 is None:
-                    continue
+                logging.info(f"✅ Отримано сигнали готовності для {pair}. Продовжуємо...")
 
-                sell_cost = data1['bid_size'] * data1['bid_price']
-                buy_cost = data2['ask_size'] * data2['ask_price']
-                if (data1['volume_24h'] > 50000 and data2['volume_24h'] > 50000
-                        and buy_cost >= investment and sell_cost >= investment):
-                    potential_profit = arbitrage_check(data1, data2)
-                    time.sleep(3)
-                    if potential_profit > 0.0000000001:
-                        profit, profit_percent, trade_volume, trade_volume_usdt, bid_price, ask_price = arbitrage(
-                            exchange1, exchange2, data1, data2, pair, whitebit_symbol_fee)
-                        print(f"### Arbitrage opportunity {pair} ### \n"
-                              f"Number of coins: {trade_volume}\n"
-                              f"Cost USDT: {trade_volume_usdt}\n"
-                              f"Sell on {exchange1} \n"
-                              f"Buy on {exchange2} \n"
-                              f"Profit: {profit}\n"
-                              f"Profit percent: {profit_percent:.2f}%\n"
-                              f"Bid price: {bid_price}\n"
-                              f"Ask price: {ask_price}\n\n")
-
-        it += 1
-        end_time = time.time()
-        execution_time = end_time - start_time
-        print(f"Execution time: {execution_time:.2f} seconds")
-        time.sleep(1)  # Delay to reduce API load
+        if EXCHANGE_ROLE == "main":
+            it += 1
+            end_time = time.time()
+            logging.info(f"Час запуску: {end_time - start_time:.2f} секунд")
+            time.sleep(1)
 
 
 if __name__ == "__main__":

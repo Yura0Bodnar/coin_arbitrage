@@ -1,20 +1,15 @@
-# Use an official Python runtime as a parent image
 FROM python:3.12-slim
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy the current directory contents into the container at /app
-COPY . /app
+COPY pyproject.toml poetry.lock ./
+RUN pip install --no-cache-dir poetry
 
-# Install any needed packages specified in requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN poetry config virtualenvs.create false && poetry install --no-root --no-interaction --no-ansi
 
-# Copy the .env file into the container
-COPY .env .env
+COPY . .
 
-# Ensure the environment variables in .env are available to Python
-RUN export $(cat .env | xargs)
+# Додаємо каталог у PYTHONPATH
+ENV PYTHONPATH=/app
 
-# Run main.py when the container launches
-CMD ["python", "main.py"]
+CMD ["python", "coin_arbitrage/main.py"]
