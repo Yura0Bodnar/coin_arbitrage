@@ -1,5 +1,6 @@
 import requests
 
+
 def get_binance_data(symbol):
     response = None
     try:
@@ -8,11 +9,11 @@ def get_binance_data(symbol):
         response.raise_for_status()
         data = response.json()
         return {
-            "bid_price": float(data['bidPrice']),
-            "ask_price": float(data['askPrice']),
-            "bid_size": float(data['bidQty']),
-            "ask_size": float(data['askQty']),
-            "volume_24h": float(data['volume']),
+            "bid_price": float(data["bidPrice"]),
+            "ask_price": float(data["askPrice"]),
+            "bid_size": float(data["bidQty"]),
+            "ask_size": float(data["askQty"]),
+            "volume_24h": float(data["volume"]),
         }
     except requests.exceptions.RequestException as e:
         if response.status_code == 400:
