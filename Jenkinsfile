@@ -10,12 +10,6 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repo') {
-            steps {
-                git url: 'https://github.com/Yura0Bodnar/coin_arbitrage.git', branch: 'dev_yura'
-            }
-        }
-
         stage('Build') {
             steps {
                 script {
@@ -23,7 +17,7 @@ pipeline {
                         sh 'docker-compose up -d --build'
                         sleep(time: 10, unit: "SECONDS") // даємо час контейнерам запуститися
                     } catch (Exception e) {
-                        echo "Docker Compose failed!"
+                        error "Docker Compose failed!"
                         currentBuild.result = 'FAILURE'
                     }
                 }
