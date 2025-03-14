@@ -32,7 +32,7 @@ def get_server_time():
     url = base_url + endpoint
 
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()  # Перевірка статусу відповіді
         data = response.json()
 
@@ -69,7 +69,7 @@ def get_bybit_fee(symbol):
 
         # Make request
         response = requests.get(
-            f"https://api.bybit.com/v5/account/fee-rate?{query_string}", headers=headers
+            f"https://api.bybit.com/v5/account/fee-rate?{query_string}", headers=headers, timeout=10
         )
         response.raise_for_status()
         data = response.json()

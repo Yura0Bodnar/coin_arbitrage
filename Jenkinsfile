@@ -24,19 +24,34 @@ pipeline {
             }
         }
 
-        stage('Check Code') {
-            steps {
-                script {
-                    def containers = ['coin_arbitrage-main', 'coin_arbitrage-bybit', 'coin_arbitrage-whitebit']
-                    for (c in containers) {
-                        echo "Running lint check in ${c}"
-                        sh "docker exec ${c} poetry run black --check ."
-                        sh "docker exec ${c} poetry run flake8 ."
+        stage('Static Analysis') {
+            parallel {
+                stage('Check Code') {
+                    steps {
+                        script {
+                            def containers = ['coin_arbitrage-main', 'coin_arbitrage-bybit', 'coin_arbitrage-whitebit']
+                            for (c in containers) {
+                                echo "Running lint check in ${c}"
+                                sh "docker exec ${c} poetry run black --check ."
+                                sh "docker exec ${c} poetry run flake8 ."
+                            }
+                        }
+                    }
+                }
+
+                stage('Security Check') {
+                    steps {
+                        script {
+                            def containers = ['coin_arbitrage-main', 'coin_arbitrage-bybit', 'coin_arbitrage-whitebit']
+                            for (c in containers) {
+                                echo "Running security check in ${c}"
+                                sh "docker exec ${c} poetry run bandit -r ."
+                            }
+                        }
                     }
                 }
             }
         }
-
         /*
         stage('Test') {
             steps {
@@ -49,24 +64,6 @@ pipeline {
                 }
             }
         } */
-
-        /*
-        stage('Security Check') {
-            steps {
-                script {
-                    def containers = ['coin_arbitrage-main', 'coin_arbitrage-bybit', 'coin_arbitrage-whitebit']
-                    for (c in containers) {
-                        echo "Running security check in ${c}"
-                        // Bandit - аналіз безпеки Python-коду
-                        sh "docker exec ${c} poetry run bandit -r ."
-
-                        // Safety - перевірка залежностей Python на вразливості
-                        sh "docker exec ${c} poetry run safety check"
-                    }
-                }
-            }
-        }
-        */
         /*
         stage('Merge to dev') {
             steps {

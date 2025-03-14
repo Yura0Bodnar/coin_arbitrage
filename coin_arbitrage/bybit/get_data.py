@@ -19,7 +19,7 @@ redis_client = redis.Redis(host=REDIS_HOST, port=6379, db=0, decode_responses=Tr
 def get_bybit_data(symbol, redis_key):
     try:
         url = f"https://api.bybit.com/v5/market/tickers?category=spot&symbol={symbol}"
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
         ticker = data["result"]["list"][0]

@@ -21,7 +21,7 @@ def fetch_pairs_bybit(redis_key):
 
     endpoint = "/v5/market/instruments-info?category=spot"
     try:
-        response = requests.get(f"https://api.bybit.com{endpoint}")
+        response = requests.get(f"https://api.bybit.com{endpoint}", timeout=10)
         response.raise_for_status()
         data = response.json()
 

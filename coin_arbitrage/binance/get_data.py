@@ -5,7 +5,7 @@ def get_binance_data(symbol):
     response = None
     try:
         url = f"https://api4.binance.com/api/v3/ticker/24hr?symbol={symbol}"
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
         return {

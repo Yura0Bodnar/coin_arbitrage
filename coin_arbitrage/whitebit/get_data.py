@@ -19,11 +19,11 @@ def get_whitebit_data(symbol, redis_key):
         url_orderbook = f"https://whitebit.com/api/v4/public/orderbook/{symbol}?limit=1"
         url_ticker = "https://whitebit.com/api/v4/public/ticker"
 
-        response_orderbook = requests.get(url_orderbook)
+        response_orderbook = requests.get(url_orderbook, timeout=10)
         response_orderbook.raise_for_status()
         data_orderbook = response_orderbook.json()
 
-        response_ticker = requests.get(url_ticker)
+        response_ticker = requests.get(url_ticker, timeout=10)
         response_ticker.raise_for_status()
         data_ticker = response_ticker.json()
 

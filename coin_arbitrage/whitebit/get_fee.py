@@ -22,7 +22,7 @@ def get_whitebit_fee(symbol):
     try:
         # URL для отримання інформації про активи
         url = "https://whitebit.com/api/v4/public/assets"
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
         # Check for a character in the data

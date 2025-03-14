@@ -14,7 +14,7 @@ def get_binance_fee(symbol):
     api_secret = os.environ.get("BINANCE_API_SECRET")
 
     try:
-        time_req = requests.get("https://api.binance.com/api/v3/time")
+        time_req = requests.get("https://api.binance.com/api/v3/time", timeout=10)
         time_res = time_req.json()["serverTime"]
         server_time = time_res
         timestamp = str(server_time)
@@ -31,7 +31,7 @@ def get_binance_fee(symbol):
 
         # Full request with signature
         url = f"https://api.binance.com/api/v3/account/commission?{query_string}&signature={signature}"
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
 
         data = response.json()

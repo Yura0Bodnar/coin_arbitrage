@@ -48,7 +48,7 @@ def test_api_speed(url, num_requests=100):
     times = []
     for _ in range(num_requests):
         start_time = time.time()
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         elapsed_time = time.time() - start_time
         if response.status_code == 200:
             times.append(elapsed_time)
@@ -68,7 +68,7 @@ def test_api_speed(url, num_requests=100):
 def get_symbols_with_restrictions():
     try:
         url = "https://whitebit.com/api/v4/public/assets"
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()
         data = response.json()
 
