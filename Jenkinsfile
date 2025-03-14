@@ -10,12 +10,28 @@ pipeline {
     }
 
     stages {
+        stage('Check Workspace') {
+            steps {
+                script {
+                    echo "### Checking Jenkins WORKSPACE ###"
+                    sh 'pwd'
+                    sh 'ls -la'
+                    sh 'ls -la coin_arbitrage'
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
                     try {
-                        sh 'docker-compose up -d --build'
-                        sleep(time: 30, unit: "SECONDS") // даємо час контейнерам запуститися
+                        echo "### Checking if main.py exists ###"
+                        sh '[ -f coin_arbitrage/main.py ] && echo "main.py exists" || echo "main.py is MISSING!"'
+
+                        echo "### Running docker-compose ###"
+                        sh 'docker-compose up -d --build --force-recreate'
+
+                        sleep(time: 30, unit: "SECONDS") // Даємо час контейнерам запуститися
                     } catch (Exception e) {
                         error "Docker Compose failed!"
                         currentBuild.result = 'FAILURE'
