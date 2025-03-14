@@ -6,7 +6,6 @@ pipeline {
     }
 
     environment {
-        PROJECT_PATH = "$WORKSPACE"
         DOCKER_COMPOSE_FILE = "docker-compose.yml"
     }
 
@@ -15,10 +14,6 @@ pipeline {
             steps {
                 script {
                     try {
-                        echo "### Checking if main.py exists ###"
-                        sh '[ -f coin_arbitrage/main.py ] && echo "main.py exists" || echo "main.py is MISSING!"'
-
-                        echo "### Running docker-compose ###"
                         sh 'docker-compose up -d --build --force-recreate'
                         sleep(time: 30, unit: "SECONDS")
                     } catch (Exception e) {
