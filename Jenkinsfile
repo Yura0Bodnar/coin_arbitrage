@@ -62,17 +62,22 @@ pipeline {
             }
         }
         stage('Merge to dev') {
+            environment {
+                GITHUB_TOKEN = credentials('github-token')
+            }
             steps {
                 script {
                     echo "Merging dev_yura into dev"
                     sh '''
+                        git fetch origin
                         git checkout dev
                         git merge origin/dev_yura --no-edit
-                        git push origin dev
+                        git push https://${GITHUB_TOKEN}@github.com/Yura0Bodnar/https://github.com/Yura0Bodnar/coin_arbitrage.git dev
                     '''
                 }
             }
         }
+
         /*
         stage('Test') {
             steps {
