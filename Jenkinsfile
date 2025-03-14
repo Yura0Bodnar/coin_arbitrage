@@ -15,7 +15,7 @@ pipeline {
                 script {
                     try {
                         sh 'docker-compose up -d --build'
-                        sleep(time: 10, unit: "SECONDS") // даємо час контейнерам запуститися
+                        sleep(time: 30, unit: "SECONDS") // даємо час контейнерам запуститися
                     } catch (Exception e) {
                         error "Docker Compose failed!"
                         currentBuild.result = 'FAILURE'
