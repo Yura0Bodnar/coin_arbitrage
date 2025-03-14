@@ -15,7 +15,13 @@ httpx = "^0.28.1"
 aiohttp = "^3.11.11"
 pycryptodome = "^3.21.0"
 redis = "^5.2.1"
+black = "^25.1.0"
+flake8 = "^7.1.2"
 
+
+[tool.poetry.group.dev.dependencies]
+bandit = "^1.8.3"
+safety = "^3.3.1"
 
 [build-system]
 requires = ["poetry-core"]

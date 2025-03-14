@@ -1,12 +1,14 @@
 from coin_arbitrage.whitebit.get_data import get_whitebit_data
 from coin_arbitrage.bybit.get_data import get_bybit_data
-from coin_arbitrage.auxiliary_functions import association_pairs, add_underline, pair_to_symbol
+from coin_arbitrage.auxiliary_functions import (
+    association_pairs,
+    add_underline,
+)
 import logging
 import redis
 from dotenv import load_dotenv
 import os
 import time
-import sys
 
 # Завантажуємо змінні оточення
 load_dotenv()
@@ -18,7 +20,9 @@ REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 redis_client = redis.Redis(host=REDIS_HOST, port=6379, db=0, decode_responses=True)
 
 # Налаштування логування
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 def process_bybit():
@@ -60,7 +64,7 @@ def main():
 
     while True:
         start_time = time.time()
-        pairs_key = 'bybit-whitebit:pairs'
+        pairs_key = "bybit-whitebit:pairs"
 
         # Оновлюємо список пар кожні 120 ітерацій
         if it % 120 == 0:
@@ -84,11 +88,15 @@ def main():
                 redis_client.set(signal_whitebit, "1")
             elif EXCHANGE_ROLE == "main":
                 # Очікуємо сигналів готовності від контейнерів
-                while not (redis_client.get(signal_bybit) and redis_client.get(signal_whitebit)):
+                while not (
+                    redis_client.get(signal_bybit) and redis_client.get(signal_whitebit)
+                ):
                     logging.info(f"Очікуємо дані для {pair} з Bybit і Whitebit...")
                     time.sleep(5)
 
-                logging.info(f"✅ Отримано сигнали готовності для {pair}. Продовжуємо...")
+                logging.info(
+                    f"✅ Отримано сигнали готовності для {pair}. Продовжуємо..."
+                )
 
         if EXCHANGE_ROLE == "main":
             it += 1
