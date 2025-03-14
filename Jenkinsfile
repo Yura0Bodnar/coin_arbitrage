@@ -75,7 +75,7 @@ pipeline {
                         git fetch origin
                         git checkout dev
                         git merge origin/dev_yura --no-edit
-                        git push https://${GITHUB_TOKEN}@github.com/Yura0Bodnar/https://github.com/Yura0Bodnar/coin_arbitrage.git dev
+                        git push https://${GITHUB_TOKEN}@github.com/Yura0Bodnar/coin_arbitrage.git dev
                     '''
                 }
             }
