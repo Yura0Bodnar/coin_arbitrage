@@ -25,10 +25,13 @@ pipeline {
             steps {
                 script {
                     echo "Stopping and removing old containers..."
-                    sh 'docker-compose down -v || true'
+                    sh '''
+                    docker-compose down -v || true
+                    docker volume rm coin_arbitrage_coin_arbitrage_data || true
+                    '''
 
                     echo "Building and running new containers..."
-                    sh 'docker-compose up -d --build --force-recreate'
+                    sh 'docker-compose up -d --build'
                 }
             }
         }
