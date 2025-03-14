@@ -19,7 +19,7 @@ services:
       - REDIS_HOST=coin_arbitrage-redis
       - EXCHANGE_ROLE=bybit
     volumes:
-      - .:/app
+      - ${PROJECT_PATH:-.}:/app
     command: python /app/coin_arbitrage/main.py
     networks:
       - coin_arbitrage_network
@@ -34,7 +34,7 @@ services:
       - REDIS_HOST=coin_arbitrage-redis
       - EXCHANGE_ROLE=whitebit
     volumes:
-      - .:/app
+      - ${PROJECT_PATH:-.}:/app
     command: python /app/coin_arbitrage/main.py
     networks:
       - coin_arbitrage_network
@@ -51,7 +51,7 @@ services:
       - REDIS_HOST=coin_arbitrage-redis
       - EXCHANGE_ROLE=main
     volumes:
-      - .:/app
+      - ${PROJECT_PATH:-.}:/app
     command: python /app/coin_arbitrage/main.py
     networks:
       - coin_arbitrage_network

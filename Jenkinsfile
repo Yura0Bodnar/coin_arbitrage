@@ -6,21 +6,11 @@ pipeline {
     }
 
     environment {
+        PROJECT_PATH = "$WORKSPACE"
         DOCKER_COMPOSE_FILE = "docker-compose.yml"
     }
 
     stages {
-        stage('Check Workspace') {
-            steps {
-                script {
-                    echo "### Checking Jenkins WORKSPACE ###"
-                    sh 'pwd'
-                    sh 'ls -la'
-                    sh 'ls -la coin_arbitrage'
-                }
-            }
-        }
-
         stage('Build') {
             steps {
                 script {
@@ -30,8 +20,7 @@ pipeline {
 
                         echo "### Running docker-compose ###"
                         sh 'docker-compose up -d --build --force-recreate'
-
-                        sleep(time: 30, unit: "SECONDS") // Даємо час контейнерам запуститися
+                        sleep(time: 30, unit: "SECONDS")
                     } catch (Exception e) {
                         error "Docker Compose failed!"
                         currentBuild.result = 'FAILURE'
