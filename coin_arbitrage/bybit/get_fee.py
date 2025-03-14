@@ -69,7 +69,9 @@ def get_bybit_fee(symbol):
 
         # Make request
         response = requests.get(
-            f"https://api.bybit.com/v5/account/fee-rate?{query_string}", headers=headers, timeout=10
+            f"https://api.bybit.com/v5/account/fee-rate?{query_string}",
+            headers=headers,
+            timeout=10,
         )
         response.raise_for_status()
         data = response.json()
