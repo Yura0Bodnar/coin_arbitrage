@@ -56,6 +56,9 @@ services:
     networks:
       - coin_arbitrage_network
 
+volumes:
+  coin_arbitrage_data:
+
 networks:
   coin_arbitrage_network:
     driver: bridge

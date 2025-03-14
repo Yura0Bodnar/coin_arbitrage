@@ -14,7 +14,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        sh 'docker-compose up -d --build --force-recreate'
+                        sh 'docker-compose up -d --build'
                         sleep(time: 30, unit: "SECONDS")
                     } catch (Exception e) {
                         error "Docker Compose failed!"
