@@ -61,6 +61,18 @@ pipeline {
                 }
             }
         }
+        stage('Merge to dev') {
+            steps {
+                script {
+                    echo "Merging dev_yura into dev"
+                    sh '''
+                        git checkout dev
+                        git merge origin/dev_yura --no-edit
+                        git push origin dev
+                    '''
+                }
+            }
+        }
         /*
         stage('Test') {
             steps {
@@ -73,21 +85,5 @@ pipeline {
                 }
             }
         } */
-        /*
-        stage('Merge to dev') {
-            steps {
-                script {
-                    echo "Merging dev_yura into dev"
-                    sh '''
-                        git config --global user.email "yuriy575721@gmail.com"
-                        git config --global user.name "Yura0Bodnar"
-                        git checkout dev
-                        git merge origin/dev_yura --no-edit
-                        git push origin dev
-                    '''
-                }
-            }
-        }
-        */
     }
 }
