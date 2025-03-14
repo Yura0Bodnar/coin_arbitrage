@@ -10,16 +10,25 @@ pipeline {
     }
 
     stages {
+
+        stage('Checkout Code') {
+            steps {
+                script {
+                    echo "Fetching latest code from GitHub..."
+                    sh 'git reset --hard'
+                    sh 'git pull origin dev_yura'
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 script {
-                    try {
-                        sh 'docker-compose up -d --build'
-                        sleep(time: 30, unit: "SECONDS")
-                    } catch (Exception e) {
-                        error "Docker Compose failed!"
-                        currentBuild.result = 'FAILURE'
-                    }
+                    echo "Stopping and removing old containers..."
+                    sh 'docker-compose down -v || true'
+
+                    echo "Building and running new containers..."
+                    sh 'docker-compose up -d --build --force-recreate'
                 }
             }
         }
