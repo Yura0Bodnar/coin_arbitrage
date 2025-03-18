@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bybit-fetcher
+  namespace: crypto-bot
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bybit
+  template:
+    metadata:
+      labels:
+        app: bybit
+    spec:
+      containers:
+      - name: bybit
+        image: coin_arbitrage_bybit:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: EXCHANGE_ROLE
+          value: "bybit"
+        volumeMounts:
+        - name: coin-arbitrage-data
+          mountPath: /app
+      volumes:
+      - name: coin-arbitrage-data

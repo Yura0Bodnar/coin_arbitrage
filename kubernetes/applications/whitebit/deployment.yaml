@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whitebit-fetcher
+  namespace: crypto-bot
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: whitebit
+  template:
+    metadata:
+      labels:
+        app: whitebit
+    spec:
+      containers:
+      - name: whitebit
+        image: coin_arbitrage_whitebit:latest
+        ports:
+        - containerPort: 5000
+        env:
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: EXCHANGE_ROLE
+          value: "whitebit"
+        volumeMounts:
+        - name: coin-arbitrage-data
+          mountPath: /app
+      volumes:
+      - name: coin-arbitrage-data
+        persistentVolumeClaim:
+          claimName: coin-arbitrage-pvc
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: whitebit-service
+  namespace: crypto-bot
+spec:
+  selector:
+    app: whitebit
+  ports:
+  - port: 5000
+    targetPort: 5000
+  type: ClusterIP

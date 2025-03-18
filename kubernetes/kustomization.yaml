@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: crypto-bot
+
+resources:
+  - namespace.yaml
+  - base/redis.yaml
+  - base/jenkins.yaml
+  - base/secrets.yaml
+  - applications/bybit/deployment.yaml
+  - applications/bybit/service.yaml
+  - applications/whitebit/deployment.yaml
+  - applications/whitebit/service.yaml
+  - applications/main/deployment.yaml
+  - applications/main/service.yaml

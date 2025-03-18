@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: main-app
+  namespace: crypto-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: main
+  template:
+    metadata:
+      labels:
+        app: main
+    spec:
+      containers:
+      - name: main
+        image: coin_arbitrage_main:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: EXCHANGE_ROLE
+          value: "main"
+        volumeMounts:
+        - name: coin-arbitrage-data
+          mountPath: /app
+      volumes:
+      - name: coin-arbitrage-data
+        persistentVolumeClaim:
+          claimName: coin-arbitrage-pvc
