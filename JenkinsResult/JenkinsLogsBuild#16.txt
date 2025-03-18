@@ -1,0 +1,450 @@
+Started by GitHub push by Yura0Bodnar
+Checking out git https://github.com/Yura0Bodnar/coin_arbitrage.git into /var/jenkins_home/workspace/coin_arbitrage@script/d64da7bdabf81950a9d022c74b46e332d441ed7bac0a14ac044f4bf8554ddb42 to read Jenkinsfile
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/coin_arbitrage@script/d64da7bdabf81950a9d022c74b46e332d441ed7bac0a14ac044f4bf8554ddb42/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Yura0Bodnar/coin_arbitrage.git # timeout=10
+Fetching upstream changes from https://github.com/Yura0Bodnar/coin_arbitrage.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/Yura0Bodnar/coin_arbitrage.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/dev_yura^{commit} # timeout=10
+Checking out Revision 7622b6d9c0bfa9c7c9368690789ea47149f7f3c8 (refs/remotes/origin/dev_yura)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 7622b6d9c0bfa9c7c9368690789ea47149f7f3c8 # timeout=10
+Commit message: "modified stage('Merge to dev')"
+ > git rev-list --no-walk 785ae43b6a4416d119bee3b41a8474f5710b404d # timeout=10
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins
+ in /var/jenkins_home/workspace/coin_arbitrage
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/jenkins_home/workspace/coin_arbitrage/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Yura0Bodnar/coin_arbitrage.git # timeout=10
+Fetching upstream changes from https://github.com/Yura0Bodnar/coin_arbitrage.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.39.5'
+ > git fetch --tags --force --progress -- https://github.com/Yura0Bodnar/coin_arbitrage.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/dev_yura^{commit} # timeout=10
+Checking out Revision 7622b6d9c0bfa9c7c9368690789ea47149f7f3c8 (refs/remotes/origin/dev_yura)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 7622b6d9c0bfa9c7c9368690789ea47149f7f3c8 # timeout=10
+Commit message: "modified stage('Merge to dev')"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout Code)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+Fetching latest code from GitHub...
+[Pipeline] sh
++ git reset --hard
+HEAD is now at 7622b6d modified stage('Merge to dev')
+[Pipeline] sh
++ git pull origin dev_yura
+From https://github.com/Yura0Bodnar/coin_arbitrage
+ * branch            dev_yura   -> FETCH_HEAD
+Already up to date.
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+Stopping and removing old containers...
+[Pipeline] sh
++ docker-compose down -v
+Stopping coin_arbitrage-main     ... 
+Stopping coin_arbitrage-whitebit ... 
+Stopping coin_arbitrage-bybit    ... 
+Stopping coin_arbitrage-redis    ... 
+Stopping coin_arbitrage-main     ... done
+Stopping coin_arbitrage-bybit    ... done
+Stopping coin_arbitrage-whitebit ... done
+Stopping coin_arbitrage-redis    ... done
+Removing coin_arbitrage-main     ... 
+Removing coin_arbitrage-whitebit ... 
+Removing coin_arbitrage-bybit    ... 
+Removing coin_arbitrage-redis    ... 
+Removing coin_arbitrage-bybit    ... done
+Removing coin_arbitrage-main     ... done
+Removing coin_arbitrage-redis    ... done
+Removing coin_arbitrage-whitebit ... done
+Removing network coin_arbitrage_coin_arbitrage_network
+Removing volume coin_arbitrage_coin_arbitrage_data
++ docker volume rm coin_arbitrage_coin_arbitrage_data
+Error: No such volume: coin_arbitrage_coin_arbitrage_data
++ true
+[Pipeline] echo
+Building and running new containers...
+[Pipeline] sh
++ docker-compose up -d --build
+Creating network "coin_arbitrage_coin_arbitrage_network" with driver "bridge"
+Creating volume "coin_arbitrage_coin_arbitrage_data" with default driver
+Building bybit
+#2 [internal] load build definition from Dockerfile
+#2 sha256:12124aaec6a4e96aab601174a1b1e632250f017558932b0866ed7d79bf59ad45
+#2 transferring dockerfile: 367B done
+#2 DONE 0.0s
+
+#1 [internal] load .dockerignore
+#1 sha256:64dcaddbc86385b233d02bafe5088514d29ca2b454928795295b079c6fbdaca8
+#1 transferring context: 2B done
+#1 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 sha256:282c60c0cd524c3474d0420c244e3d5df8cc4a2d2881ca24f552a4fde5d61527
+#3 DONE 0.5s
+
+#10 [1/6] FROM docker.io/library/python:3.12-slim@sha256:aaa3f8cb64dd64e5f8cb6e58346bdcfa410a108324b0f28f1a7cc5964355b211
+#10 sha256:34f003f29bcd04206d4b5302b45a7f2c5b0cff0f7a47171e3c32ebf20be894b5
+#10 DONE 0.0s
+
+#8 [internal] load build context
+#8 sha256:88e45253ddcce11fd431ecf6cc3ded767bcb6e8498a2a904983d8150fbf1af48
+#8 transferring context: 27.03kB 0.0s done
+#8 DONE 0.0s
+
+#9 [2/6] WORKDIR /app
+#9 sha256:06320eea4a948494e896de4a2e60361c0b29dd1470b6f6a470cac7e9cda127cc
+#9 CACHED
+
+#7 [3/6] COPY pyproject.toml poetry.lock ./
+#7 sha256:94d255081032297a2c6fc44d9e8de089ebd3258416377a1537aeaacf4784aade
+#7 CACHED
+
+#6 [4/6] RUN pip install --no-cache-dir poetry
+#6 sha256:2f9962efebe9e524ff3a1c390ca28bfd10c5d785a11c86bf82a0ac8081d1fc61
+#6 CACHED
+
+#5 [5/6] RUN poetry config virtualenvs.create false && poetry install --no-root --no-interaction --no-ansi
+#5 sha256:867b71b471e5aff2996619656a6d5f549c4972de0990c71ac065b15e95845f4c
+#5 CACHED
+
+#4 [6/6] COPY . .
+#4 sha256:9da2a2a9b27eb56bae53928580e5f0cc0ef66cad9479aff3b16995d0084f9bc4
+#4 DONE 0.0s
+
+#11 exporting to image
+#11 sha256:a312a32e3a1781ed5b20ba4233f2a0ab97e3941a096bc8d9aaf4c2471a853f94
+#11 exporting layers 0.0s done
+#11 writing image sha256:2acda632fcbed38def0c47387576dbc9054bd64e6e34e29fa414b9ad73596e9d done
+#11 naming to docker.io/library/coin_arbitrage_bybit:latest done
+#11 DONE 0.0s
+Building whitebit
+#1 [internal] load .dockerignore
+#1 sha256:fd86c807ed0d88fd68419bce410e0f45b7e7383ae9bcc443e137bb99d8723e6d
+#1 transferring context: 2B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 sha256:88129edd917ebafd78786d5e64ab00c058227b715db320036be564ce9ab82196
+#2 transferring dockerfile: 367B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 sha256:282c60c0cd524c3474d0420c244e3d5df8cc4a2d2881ca24f552a4fde5d61527
+#3 DONE 0.2s
+
+#10 [1/6] FROM docker.io/library/python:3.12-slim@sha256:aaa3f8cb64dd64e5f8cb6e58346bdcfa410a108324b0f28f1a7cc5964355b211
+#10 sha256:34f003f29bcd04206d4b5302b45a7f2c5b0cff0f7a47171e3c32ebf20be894b5
+#10 DONE 0.0s
+
+#8 [internal] load build context
+#8 sha256:5d41a0f90202a21710fd2aec1e6718bb4a57668724a7f606f37b3e374f645e26
+#8 transferring context: 10.00kB 0.0s done
+#8 DONE 0.0s
+
+#9 [2/6] WORKDIR /app
+#9 sha256:06320eea4a948494e896de4a2e60361c0b29dd1470b6f6a470cac7e9cda127cc
+#9 CACHED
+
+#7 [3/6] COPY pyproject.toml poetry.lock ./
+#7 sha256:2e0a155649d38232670645aefd9ba17fda3b7099f56c23ec39e7b5885f937b31
+#7 CACHED
+
+#6 [4/6] RUN pip install --no-cache-dir poetry
+#6 sha256:3baeda0b7dad83edb5bee43aa64d666a4c9ba6922d9cc17ed8302253fe367d9b
+#6 CACHED
+
+#5 [5/6] RUN poetry config virtualenvs.create false && poetry install --no-root --no-interaction --no-ansi
+#5 sha256:1e59d4f6bee5139898133a662b285bdcf736fcd2f201acc743ba452d4fe5add3
+#5 CACHED
+
+#4 [6/6] COPY . .
+#4 sha256:c98672053171d066cdf898d93d07725a32073d3b7ec062a8c0bb011b66c0d81d
+#4 CACHED
+
+#11 exporting to image
+#11 sha256:e06e68fe75a071be8c5f07a274afe40a41f861f4cfa194c3dcc1bbbe23be7a55
+#11 exporting layers done
+#11 writing image sha256:2acda632fcbed38def0c47387576dbc9054bd64e6e34e29fa414b9ad73596e9d done
+#11 naming to docker.io/library/coin_arbitrage_whitebit:latest done
+#11 DONE 0.0s
+Building main
+#1 [internal] load .dockerignore
+#1 sha256:3afa4cd2d1a901c9eb82f6113c6d0045ddaded8d8ca48c598e08342a24f5de11
+#1 transferring context: 2B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 sha256:2df9bc1dd2357665ec27f18c092d1f89db3346323c9d6682c88cc92a8173b1e2
+#2 transferring dockerfile: 367B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 sha256:282c60c0cd524c3474d0420c244e3d5df8cc4a2d2881ca24f552a4fde5d61527
+#3 DONE 0.2s
+
+#10 [1/6] FROM docker.io/library/python:3.12-slim@sha256:aaa3f8cb64dd64e5f8cb6e58346bdcfa410a108324b0f28f1a7cc5964355b211
+#10 sha256:34f003f29bcd04206d4b5302b45a7f2c5b0cff0f7a47171e3c32ebf20be894b5
+#10 DONE 0.0s
+
+#8 [internal] load build context
+#8 sha256:5b5dd1c5b25092a9ef3736087480b1a82df4bf3f20dfa2453123ee7f0a1fc0d5
+#8 transferring context: 10.00kB 0.0s done
+#8 DONE 0.0s
+
+#6 [4/6] RUN pip install --no-cache-dir poetry
+#6 sha256:c4a8da638d41df786f50cf8e55133802970a09a064ecac785fa364485116bb75
+#6 CACHED
+
+#9 [2/6] WORKDIR /app
+#9 sha256:06320eea4a948494e896de4a2e60361c0b29dd1470b6f6a470cac7e9cda127cc
+#9 CACHED
+
+#7 [3/6] COPY pyproject.toml poetry.lock ./
+#7 sha256:e4bab76b60e9af1709b09c65f76316306dca9a32e34d22ac24f0a419a4e0c575
+#7 CACHED
+
+#5 [5/6] RUN poetry config virtualenvs.create false && poetry install --no-root --no-interaction --no-ansi
+#5 sha256:78f2db678724f80281239f0371739a9e1b0bb80e29dd3b2c17388844eb39f56b
+#5 CACHED
+
+#4 [6/6] COPY . .
+#4 sha256:d018a8e2716cba95ffd394f59656eebb2ee09a9c43cb10648b559de72443f8f4
+#4 CACHED
+
+#11 exporting to image
+#11 sha256:8b75f2cfe5da794292a9b393edc1772594831e5aed8ca61e77542a22b215a093
+#11 exporting layers done
+#11 writing image sha256:2acda632fcbed38def0c47387576dbc9054bd64e6e34e29fa414b9ad73596e9d done
+#11 naming to docker.io/library/coin_arbitrage_main:latest done
+#11 DONE 0.0s
+Creating coin_arbitrage-redis ... 
+Creating coin_arbitrage-redis ... done
+Creating coin_arbitrage-bybit ... 
+Creating coin_arbitrage-whitebit ... 
+Creating coin_arbitrage-whitebit ... done
+Creating coin_arbitrage-bybit    ... done
+Creating coin_arbitrage-main     ... 
+Creating coin_arbitrage-main     ... done
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Static Analysis)
+[Pipeline] parallel
+[Pipeline] { (Branch: Check Code)
+[Pipeline] { (Branch: Security Check)
+[Pipeline] stage
+[Pipeline] { (Check Code)
+[Pipeline] stage
+[Pipeline] { (Security Check)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+Running lint check in coin_arbitrage-main
+[Pipeline] sh
+[Pipeline] echo
+Running security check in coin_arbitrage-main
+[Pipeline] sh
++ docker exec coin_arbitrage-main poetry run black --check .
++ docker exec coin_arbitrage-main poetry run bandit -r .
+Skipping virtualenv creation, as specified in config file.
+Skipping virtualenv creation, as specified in config file.
+All done! ✨ 🍰 ✨
+15 files would be left unchanged.
+[Pipeline] sh
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.12.9
+Run started:2025-03-14 19:50:27.327121
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 659
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):
+[Pipeline] echo
+Running security check in coin_arbitrage-bybit
+[Pipeline] sh
++ docker exec coin_arbitrage-main poetry run flake8 .
++ docker exec coin_arbitrage-bybit poetry run bandit -r .
+Skipping virtualenv creation, as specified in config file.
+Skipping virtualenv creation, as specified in config file.
+[Pipeline] echo
+Running lint check in coin_arbitrage-bybit
+[Pipeline] sh
++ docker exec coin_arbitrage-bybit poetry run black --check .
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.12.9
+Run started:2025-03-14 19:50:29.304483
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 659
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):
+[Pipeline] echo
+Running security check in coin_arbitrage-whitebit
+[Pipeline] sh
+Skipping virtualenv creation, as specified in config file.
++ docker exec coin_arbitrage-whitebit poetry run bandit -r .
+All done! ✨ 🍰 ✨
+15 files would be left unchanged.
+[Pipeline] sh
+Skipping virtualenv creation, as specified in config file.
++ docker exec coin_arbitrage-bybit poetry run flake8 .
+Skipping virtualenv creation, as specified in config file.
+[main]	INFO	profile include tests: None
+[main]	INFO	profile exclude tests: None
+[main]	INFO	cli include tests: None
+[main]	INFO	cli exclude tests: None
+[main]	INFO	running on Python 3.12.9
+Run started:2025-03-14 19:50:30.470784
+
+Test results:
+	No issues identified.
+
+Code scanned:
+	Total lines of code: 659
+	Total lines skipped (#nosec): 0
+	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+
+Run metrics:
+	Total issues (by severity):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+	Total issues (by confidence):
+		Undefined: 0
+		Low: 0
+		Medium: 0
+		High: 0
+Files skipped (0):
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] echo
+Running lint check in coin_arbitrage-whitebit
+[Pipeline] sh
++ docker exec coin_arbitrage-whitebit poetry run black --check .
+Skipping virtualenv creation, as specified in config file.
+All done! ✨ 🍰 ✨
+15 files would be left unchanged.
+[Pipeline] sh
++ docker exec coin_arbitrage-whitebit poetry run flake8 .
+Skipping virtualenv creation, as specified in config file.
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // parallel
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Merge to dev)
+[Pipeline] withCredentials
+Masking supported pattern matches of $GITHUB_TOKEN
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] echo
+Merging dev_yura into dev
+[Pipeline] sh
++ git fetch origin
++ git checkout dev
+Previous HEAD position was 7622b6d modified stage('Merge to dev')
+Switched to branch 'dev'
+Your branch is ahead of 'origin/dev' by 52 commits.
+  (use "git push" to publish your local commits)
++ git merge origin/dev_yura --no-edit
+Updating 785ae43..7622b6d
+Fast-forward
+ Jenkinsfile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
++ git push https://****@github.com/Yura0Bodnar/coin_arbitrage.git dev
+To https://github.com/Yura0Bodnar/coin_arbitrage.git
+   04458ab..7622b6d  dev -> dev
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
