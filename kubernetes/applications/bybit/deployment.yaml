@@ -4,7 +4,7 @@ metadata:
   name: bybit-fetcher
   namespace: crypto-bot
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: bybit
@@ -15,16 +15,11 @@ spec:
     spec:
       containers:
       - name: bybit
-        image: coin_arbitrage_bybit:latest
+        image: yurabodnar/coin_arbitrage-bybit:latest
         ports:
-        - containerPort: 5000
+        - containerPort: 8000
         env:
         - name: REDIS_HOST
           value: "redis-service"
         - name: EXCHANGE_ROLE
           value: "bybit"
-        volumeMounts:
-        - name: coin-arbitrage-data
-          mountPath: /app
-      volumes:
-      - name: coin-arbitrage-data

@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: main
-        image: coin_arbitrage_main:latest
+        image: yurabodnar/coin_arbitrage-main:latest
         ports:
         - containerPort: 8000
         env:
@@ -28,5 +28,4 @@ spec:
           mountPath: /app
       volumes:
       - name: coin-arbitrage-data
-        persistentVolumeClaim:
-          claimName: coin-arbitrage-pvc
+        emptyDir: {}

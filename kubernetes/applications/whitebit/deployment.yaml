@@ -4,7 +4,7 @@ metadata:
   name: whitebit-fetcher
   namespace: crypto-bot
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: whitebit
@@ -15,33 +15,11 @@ spec:
     spec:
       containers:
       - name: whitebit
-        image: coin_arbitrage_whitebit:latest
+        image: yurabodnar/coin_arbitrage-whitebit:latest
         ports:
-        - containerPort: 5000
+        - containerPort: 8000
         env:
         - name: REDIS_HOST
           value: "redis-service"
         - name: EXCHANGE_ROLE
           value: "whitebit"
-        volumeMounts:
-        - name: coin-arbitrage-data
-          mountPath: /app
-      volumes:
-      - name: coin-arbitrage-data
-        persistentVolumeClaim:
-          claimName: coin-arbitrage-pvc
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: whitebit-service
-  namespace: crypto-bot
-spec:
-  selector:
-    app: whitebit
-  ports:
-  - port: 5000
-    targetPort: 5000
-  type: ClusterIP
